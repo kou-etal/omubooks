@@ -12,7 +12,7 @@ export default function AppLayout({ children }) {
     <div className="min-h-screen flex flex-col">
       {/* ナビゲーションバー */}
       <nav className="h-14 bg-white border-b flex items-center justify-around px-4">
-        <Link to="/home" className="text-sm font-medium">
+        <Link to="/" className="text-sm font-medium">
           🏠 ホーム
         </Link>
 
