@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {AdminLink} from '../components/AdminLink';
 import axios from 'axios';
+import AppLayout from '../components/AppLayout'
 
 export function ProductList() {
   const [products, setProducts] = useState([]);
@@ -31,10 +32,10 @@ export function ProductList() {
 );
 
   return (
+    <AppLayout>
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">商品一覧</h1>
       <div className="h-px bg-gray-300 mb-16"/>
-    
 <ul className="grid grid-cols-3 gap-4">
   {products.map(product => (
     <li key={product.id} className="border p-4">
@@ -43,7 +44,13 @@ export function ProductList() {
     </li>
   ))}
 </ul>
-   <Link to="/edit">プロフィール</Link>
+    </div>
+    </AppLayout>
+  );
+}
+
+ /* <p className="mb-4">天気: {weather.weather[0].description} / 気温: {weather.main.temp}°C</p>*/
+/*<Link to="/edit">プロフィール</Link>
    <Link to="/register">新規登録</Link>
    <Link to="/login">ログイン</Link>
    <Link to="/logout">ログアウト</Link>
@@ -55,9 +62,4 @@ export function ProductList() {
    <Link to="/chat">チャット</Link>
    <Link to="/my-groups">グループチャット</Link>
    <Link to="/users">個人チャット</Link>
-   <AdminLink></AdminLink>
-    </div>
-  );
-}
-
- /* <p className="mb-4">天気: {weather.weather[0].description} / 気温: {weather.main.temp}°C</p>*/
+   <AdminLink></AdminLink>*/
