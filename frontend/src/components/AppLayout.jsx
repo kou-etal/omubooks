@@ -60,9 +60,6 @@ export default function AppLayout({ children }) {
               <Link to="/edit" className="hover:bg-blue-700">プロフィール編集</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/follow" className="hover:bg-blue-700">フォロー一覧</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
               <Link to="/logout" className="hover:bg-blue-700">ログアウト</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>

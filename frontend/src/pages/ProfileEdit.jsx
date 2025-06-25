@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
 import { axiosInstance } from '../api/axiosInstance';
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import AppLayout from '../components/AppLayout';
 
 export function ProfileEdit() {
   const [profile, setProfile] = useState({ name: '', bio: '', profile_image: '' });
@@ -52,35 +58,47 @@ export function ProfileEdit() {
   };
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl mb-4">プロフィール編集</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label>画像選択:</label>
-          <input type="file" onChange={handleImageChange} />
-          <button type="button" onClick={handleImageUpload} className="ml-2 bg-gray-300 px-2 py-1">アップロード</button>
-        </div>
-        <div>
-          <label>名前:</label>
-          <input name="name" value={profile.name} onChange={handleChange} className="border w-full" />
-        </div>
-        <div>
-          <label>自己紹介:</label>
-          <textarea name="bio" value={profile.bio} onChange={handleChange} className="border w-full" />
-        </div>
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2">保存</button>
-      </form>
-
-     {profile.profile_image && (
-  <div className="mt-4">
-    <p>現在の画像：</p>
-    <img
-      src={profile.profile_image}
-      alt="プロフィール画像"
-      className="w-32 h-32 rounded-full object-cover"
-    />
-  </div>
-)}
+   <AppLayout>
+ <Card className="max-w-4xl w-full mt-20 mb-8 shadow-md">
+  <CardContent className="p-8 space-y-6">
+    <div className="flex justify-between items-center">
+      <h2 className="text-2xl font-bold">プロフィール編集</h2>
+      {profile.profile_image && (
+        <img
+          src={profile.profile_image}
+          alt="プロフィール画像"
+          className="w-20 h-20 rounded-full object-cover"
+        />
+      )}
     </div>
+    
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <Label>画像選択:</Label>
+        <Input type="file" onChange={handleImageChange} />
+        <Button
+          type="button"
+          onClick={handleImageUpload}
+          className="mt-1"
+          variant="secondary"
+        >
+          アップロード
+        </Button>
+      </div>
+      <div>
+        <Label>名前:</Label>
+        <Input name="name" value={profile.name} onChange={handleChange} />
+      </div>
+      <div>
+        <Label>自己紹介:</Label>
+        <Textarea name="bio" value={profile.bio} onChange={handleChange} />
+      </div>
+      <Button type="submit" className="w-full">
+        保存
+      </Button>
+    </form>
+  </CardContent>
+</Card>
+</AppLayout>
   );
 }
