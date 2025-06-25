@@ -14,6 +14,7 @@ export function MyGroupList() {
   return (
     <div className="p-4 max-w-xl mx-auto">
       <h2 className="text-2xl font-bold mb-4">参加中のグループ</h2>
+      <div className="h-px bg-gray-300 mb-16" />
       <ul className="space-y-2">
         {groups.map(group => (
           <li key={group.id} className="border rounded p-3 shadow-sm hover:bg-gray-100">

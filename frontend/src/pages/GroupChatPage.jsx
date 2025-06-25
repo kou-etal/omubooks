@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { axiosInstance } from '../api/axiosInstance';
 import { GroupMessage } from '../components/GroupMessage';
+import AppLayout from '../components/AppLayout'
 
 
 export const GroupChatPage = () => {
@@ -28,11 +29,13 @@ export const GroupChatPage = () => {
   if (!currentUserId) return <div>ログインユーザーが取得できませんでした</div>;
 
   return (
-    <div>
+      <AppLayout>
+    <div className="w-full">
       <GroupMessage
         currentUserId={currentUserId}
         groupId={groupId}
       />
     </div>
+    </AppLayout>
   );
 };
