@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../api/axiosInstance';
+import AppLayout from '../components/AppLayout';
 
 export function VerifyEmail() {
   const { id, hash } = useParams();
@@ -27,5 +28,13 @@ export function VerifyEmail() {
     verify();
   }, []);
 
-  return <h1>{message}</h1>;
+return (
+  <AppLayout>
+    <div className="flex justify-center items-center h-[60vh]">
+      <div className="bg-gray-100 text-gray-800 text-xl font-medium px-6 py-4 rounded shadow-sm border border-gray-300">
+        {message || '認証が完了しました'}
+      </div>
+    </div>
+  </AppLayout>
+);
 }

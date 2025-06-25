@@ -32,10 +32,11 @@ export function RegisterForm() {
 };
 
   return (
-    <AppLayout>
-  <div className="flex justify-center items-center min-h-screen">
+  <AppLayout>
+  <div className="flex justify-center py-16 px-4">
     <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-xl space-y-6">
       <h1 className="text-2xl font-bold text-center">新規登録</h1>
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
@@ -65,6 +66,7 @@ export function RegisterForm() {
           登録
         </button>
       </form>
+
       {message && <p className="text-green-600 text-center">{message}</p>}
     </div>
   </div>
