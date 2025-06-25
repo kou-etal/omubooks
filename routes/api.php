@@ -87,7 +87,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile-image', [ProfileApiController::class, 'uploadImage']);
 });
 
-Route::middleware('auth:sanctum')->get('/posts', [PostApiController::class, 'index']);
+Route::get('/posts', [PostApiController::class, 'index']);
 Route::middleware('auth:sanctum')->get('/posts/following', [PostApiController::class, 'following']);
 Route::middleware('auth:sanctum')->post('/posts', [PostApiController::class, 'store']);
 Route::middleware('auth:sanctum')->post('/posts/{post}/like', [PostApiController::class, 'like']);

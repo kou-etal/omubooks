@@ -4,6 +4,7 @@ import AppLayout from '../components/AppLayout'
 
 export function PostList() {
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchPosts();
@@ -11,7 +12,10 @@ export function PostList() {
 
   const fetchPosts = () => {
     axiosInstance.get('/api/posts')
-      .then(res => setPosts(res.data))
+      .then(res => {
+        setPosts(res.data);
+         setLoading(false);
+      })
       .catch(err => console.error('取得失敗', err));
   };
 
@@ -24,6 +28,13 @@ export function PostList() {
       console.error('いいね失敗', err);
     }
   };
+
+   if (loading) return (
+    <div className="min-h-screen flex justify-center text-center items-center">
+      <p className="text-3xl font-light tracking-widest uppercase text-gray-500 animate-pulse">読み込み中...</p>
+    </div>
+  );
+
 
   return (
     <AppLayout>

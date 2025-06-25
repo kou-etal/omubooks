@@ -1,29 +1,54 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { axiosInstance } from '../api/axiosInstance';
+import AppLayout from '../components/AppLayout'
 
 export function MyGroupList() {
   const [groups, setGroups] = useState([]);
+   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axiosInstance.get('/api/my-groups')
-      .then(res => setGroups(res.data))
+      .then(res => {
+        setGroups(res.data);
+         setLoading(false);
+  })
       .catch(err => console.error('グループ取得失敗:', err));
   }, []);
 
+   if (loading) return (
+    <div className="min-h-screen flex justify-center text-center items-center">
+      <p className="text-3xl font-light tracking-widest uppercase text-gray-500 animate-pulse">読み込み中...</p>
+    </div>
+  );
   return (
-    <div className="p-4 max-w-xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">参加中のグループ</h2>
-      <div className="h-px bg-gray-300 mb-16" />
-      <ul className="space-y-2">
+   <AppLayout>
+  <div className="w-full max-w-2xl px-4 py-12">
+    <h2 className="text-2xl font-bold mb-6 text-center">参加中のグループ</h2>
+    <div className="h-px bg-gray-300 mb-8" />
+
+    {groups.length === 0 ? (
+      <p className="text-center text-gray-500">まだグループに参加していません。</p>
+    ) : (
+      <ul className="space-y-4">
         {groups.map(group => (
-          <li key={group.id} className="border rounded p-3 shadow-sm hover:bg-gray-100">
-            <Link to={`/group-chat/${group.id}`} className="text-blue-600 hover:underline">
+          <li
+            key={group.id}
+            className="border rounded px-4 py-3 shadow-sm hover:bg-gray-100 transition"
+          >
+            <Link
+              to={`/group-chat/${group.id}`}
+              className="text-blue-600 hover:underline font-medium"
+            >
               {group.name}
             </Link>
           </li>
         ))}
       </ul>
-    </div>
+    )}
+  </div>
+</AppLayout>
+
+
   );
 }
