@@ -13,7 +13,7 @@ export const MessageHistory = ({ currentUserId, targetUserId }) => {
   }, [targetUserId]);
 
   return (
-<div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-gray-50">
+<div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-gray-50 w-full max-w-2xl mx-auto">
   {messages.map((msg, idx) => {
     const isSelf = msg.from_user_id === currentUserId;
     return (

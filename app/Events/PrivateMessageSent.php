@@ -14,9 +14,10 @@ class PrivateMessageSent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $message;
-    public $fromUserId;
-    public $toUserId;
+   public $message;
+   public $from_user_id;
+   public $to_user_id;
+
 
      public function __construct($message, $fromUserId, $toUserId)
     {
@@ -32,7 +33,7 @@ class PrivateMessageSent implements ShouldBroadcast
     
        public function broadcastOn()
    {
-    $participants = [$this->fromUserId, $this->toUserId];
+    $participants = [$this->from_user_id, $this->to_user_id];
     sort($participants);
     return new PrivateChannel('private-chat.' . $participants[0] . '.' . $participants[1]);
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { axiosInstance } from '../api/axiosInstance';
+import AppLayout from '../components/AppLayout'
 
 export function User() {
   const [users, setUsers] = useState([]);
@@ -28,7 +29,9 @@ export function User() {
   );
 
   return (
-    <div className="p-4">
+    <AppLayout>
+   <div className="w-full px-4">
+    <div className="max-w-screen-lg mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">個人チャット</h1>
       <div className="h-px bg-gray-300 mb-16" />
       <ul className="grid grid-cols-3 gap-4">
@@ -41,5 +44,7 @@ export function User() {
         ))}
       </ul>
     </div>
+  </div>
+    </AppLayout>
   );
 }

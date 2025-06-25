@@ -29,6 +29,7 @@ export function PostList() {
     <AppLayout>
     <div className="max-w-2xl mx-auto space-y-6 p-4">
       <h2 className="text-2xl font-bold mb-4">投稿一覧</h2>
+       <div className="h-px bg-gray-300 mb-16" />
 
       {posts.map(post => (
         <div key={post.id} className="border rounded p-4 shadow-sm">

@@ -24,7 +24,14 @@ export const PrivateMessage=({ currentUserId, targetUserId })=>{
     echo.private(channelName)
       .listen('.PrivateMessageSent', (e) => {
          console.log('イベント受信:', e);
-        setMessages((prev) => [...prev, e.message]);
+        setMessages((prev) => [
+      ...prev,
+      {
+        message: e.message,
+        from_user_id: e.from_user_id,
+        to_user_id: e.to_user_id,
+      },
+    ]);
       });
   });
 
@@ -49,7 +56,7 @@ export const PrivateMessage=({ currentUserId, targetUserId })=>{
 
 
  return (
-    <div className="flex flex-col h-screen w-full max-w-5xl mx-auto">
+    <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-gray-50 w-full max-w-2xl mx-auto">
       {/* チャット履歴エリア */}
       <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-gray-50">
         {messages.map((msg, idx) => {

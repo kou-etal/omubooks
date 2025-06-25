@@ -35,7 +35,7 @@ export const UserChatPage = () => {
 
   return (
     <AppLayout>
-    <div>
+    <div className="max-w-7xl w-full mx-auto px-4">
     <MessageHistory
       currentUserId={currentUserId}
       targetUserId={targetUserId}
