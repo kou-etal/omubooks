@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import {axiosInstance} from '../api/axiosInstance';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import AppLayout from '../components/AppLayout';
 
 export function RegisterForm() {
   const [name, setName] = useState("");
@@ -29,17 +32,44 @@ export function RegisterForm() {
 };
 
   return (
-    <div>
-    <h1>テスト</h1>
-    <form onSubmit={handleSubmit}>
-      <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="ユーザーネーム"/>
-      <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="メールアドレス"/>
-      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="パスワード"/>
-      <button type="submit">登録</button>
-    </form>
-     {/* ← ここでメッセージ表示！ */}
-    {message && <p style={{ color: 'green' }}>{message}</p>}
+    <AppLayout>
+  <div className="flex justify-center items-center min-h-screen">
+    <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-xl space-y-6">
+      <h1 className="text-2xl font-bold text-center">新規登録</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="ユーザーネーム"
+          className="w-full border p-2 rounded bg-blue-100"
+        />
+        <input
+          type="text"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="メールアドレス"
+          className="w-full border p-2 rounded bg-blue-100"
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="パスワード"
+          className="w-full border p-2 rounded bg-blue-100"
+        />
+        <button
+          type="submit"
+          className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
+        >
+          登録
+        </button>
+      </form>
+      {message && <p className="text-green-600 text-center">{message}</p>}
     </div>
+  </div>
+</AppLayout>
+
   );
 
 }

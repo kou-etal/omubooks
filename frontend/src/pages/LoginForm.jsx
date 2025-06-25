@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import AppLayout from '../components/AppLayout';
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -34,13 +38,34 @@ export function LoginForm() {
 };
 
   return (
-    <div>
-    <form onSubmit={handleSubmit}>
-      <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="メールアドレス"/>
-      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="パスワード"/>
-      <button type="submit">ログイン</button>
-    </form>
-    </div>
+   <AppLayout>
+  <Card className="max-w-4xl w-full mt-20 mb-8 shadow-md">
+    <CardContent className="p-8 space-y-6">
+      <h2 className="text-2xl font-bold">ログイン</h2>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <Input
+          type="text"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="メールアドレス"
+        />
+
+        <Input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="パスワード"
+        />
+
+        <Button type="submit" className="w-full">
+          ログイン
+        </Button>
+      </form>
+    </CardContent>
+  </Card>
+</AppLayout>
+
   );
 
 }
