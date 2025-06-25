@@ -34,17 +34,21 @@ export const UserChatPage = () => {
   }
 
   return (
-    <AppLayout>
-    <div className="max-w-7xl w-full mx-auto px-4">
-    <MessageHistory
-      currentUserId={currentUserId}
-      targetUserId={targetUserId}
-    />
-    <PrivateMessage
-      currentUserId={currentUserId}
-      targetUserId={targetUserId}
-    />
-    </div>
-    </AppLayout>
+   <AppLayout>
+  {/* 全体を囲む */}
+  <div className="max-w-2xl w-full mx-auto px-4">
+        <MessageHistory
+          currentUserId={currentUserId}
+          targetUserId={targetUserId}
+        />
+        <PrivateMessage
+          currentUserId={currentUserId}
+          targetUserId={targetUserId}
+        />
+
+  </div>
+</AppLayout>
+
+
   );
 };

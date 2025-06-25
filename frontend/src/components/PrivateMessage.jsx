@@ -56,47 +56,51 @@ export const PrivateMessage=({ currentUserId, targetUserId })=>{
 
 
  return (
-    <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-gray-50 w-full max-w-2xl mx-auto">
-      {/* チャット履歴エリア */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-gray-50">
-        {messages.map((msg, idx) => {
-          const isSelf = msg.from_user_id === currentUserId;
-          return (
-            <div key={idx} className={`flex flex-col ${isSelf ? 'items-end' : 'items-start'}`}>
-              <span className="text-xs text-gray-500 mb-1">
-                {isSelf ? 'あなた' : `ユーザー${msg.from_user_id}`}
-              </span>
-              <div
-                className={`max-w-md px-4 py-2 rounded-lg shadow text-sm break-words ${
-                  isSelf
-                    ? 'bg-blue-500 text-white self-end'
-                    : 'bg-gray-200 text-black self-start'
-                }`}
-              >
-                {msg.message}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+<div className="flex flex-col h-screen w-full max-w-2xl mx-auto">
+  
+  {/* チャット本体全体をスクロール対象にする */}
+  <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-gray-50">
+    {messages.map((msg, idx) => {
+      const isSelf = msg.from_user_id === currentUserId;
+      return (
+        <div key={idx} className={`flex flex-col ${isSelf ? 'items-end' : 'items-start'}`}>
+          <span className="text-xs text-gray-500 mb-1">
+            {isSelf ? 'あなた' : `ユーザー${msg.from_user_id}`}
+          </span>
+          <div
+            className={`max-w-md px-4 py-2 rounded-lg shadow text-sm break-words ${
+              isSelf
+                ? 'bg-blue-500 text-white self-end'
+                : 'bg-gray-200 text-black self-start'
+            }`}
+          >
+            {msg.message}
+          </div>
+        </div>
+      );
+    })}
+  </div>
 
-      {/* 入力フォーム */}
-      <form onSubmit={handleSubmit} className="border-t px-6 py-4 bg-white flex gap-2">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="メッセージを入力"
-          className="flex-1 border rounded px-3 py-2 text-sm"
-        />
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded text-sm"
-        >
-          送信
-        </button>
-      </form>
-    </div>
+  {/* 入力フォーム：ここは親の h-screen に sticky させる */}
+  <div className="sticky bottom-0 bg-white z-10 border-t">
+    <form onSubmit={handleSubmit} className="px-4 py-3 flex gap-2 max-w-2xl mx-auto">
+      <input
+        type="text"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="メッセージを入力"
+        className="flex-1 border rounded px-3 py-2 text-sm"
+      />
+      <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded text-sm">
+        送信
+      </button>
+    </form>
+  </div>
+</div>
+
+
+
+
     );
 }
 /*
