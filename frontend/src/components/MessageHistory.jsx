@@ -13,19 +13,28 @@ export const MessageHistory = ({ currentUserId, targetUserId }) => {
   }, [targetUserId]);
 
   return (
-    <div>
-      <h3>チャット履歴</h3>
-      <ul>
-        {messages.map((msg, idx) => (
-          <li key={idx}>
-            <strong>
-              {msg.from_user_id === currentUserId ? '自分' : `ユーザー${msg.from_user_id}`}
-            </strong>
-            ：{msg.message}
-          </li>
-        ))}
-      </ul>
-    </div>
+<div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-gray-50">
+  {messages.map((msg, idx) => {
+    const isSelf = msg.from_user_id === currentUserId;
+    return (
+      <div key={idx} className={`flex flex-col ${isSelf ? 'items-end' : 'items-start'}`}>
+        <span className="text-xs text-gray-500 mb-1">
+          {isSelf ? 'あなた' : `ユーザー${msg.from_user_id}`}
+        </span>
+        <div
+          className={`max-w-md px-4 py-2 rounded-lg shadow text-sm break-words ${
+            isSelf
+              ? 'bg-blue-500 text-white self-end'
+              : 'bg-gray-200 text-black self-start'
+          }`}
+        >
+          {msg.message}
+        </div>
+      </div>
+    );
+  })}
+</div>
+
   );
 };
 

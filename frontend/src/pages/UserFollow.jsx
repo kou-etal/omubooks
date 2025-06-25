@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { axiosInstance } from '../api/axiosInstance';
+import AppLayout from '../components/AppLayout';
 
 export function UserFollow() {
   const [users, setUsers] = useState([]);
@@ -39,9 +40,9 @@ export function UserFollow() {
   };
 
   if (loading) return (
-    <div className="min-h-screen flex justify-center items-center">
-      <p className="text-3xl text-gray-500 animate-pulse">読み込み中...</p>
-    </div>
+    <div className="min-h-screen flex justify-center text-center items-center">
+  <p className="text-3xl font-light tracking-widest uppercase text-gray-500 animate-pulse">読み込み中...</p>
+  </div>
   );
 
   // 🔍 フィルタリング（部分一致）
@@ -50,7 +51,8 @@ export function UserFollow() {
   );
 
   return (
-    <div className="p-4">
+    <AppLayout>
+    <div className="p-4 w-full max-w-4xl mx-auto">
       <input
         type="text"
         value={search}
@@ -76,6 +78,7 @@ export function UserFollow() {
         ))}
       </ul>
     </div>
+    </AppLayout>
   );
 }
 /*import { useEffect, useState } from 'react';

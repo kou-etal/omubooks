@@ -27,11 +27,12 @@ export function AdminLink() {
   return (
     <div>
     <Link to="/admin/dashboard" className="text-red-500">
-      管理者ページ
+      ⚙️ 管理者ページ
     </Link>
-    <Link to="/admin/creategroup" className="text-red-500">
-      グル－プ作成
-    </Link>
+    
     </div>
   );
 }
+/*<Link to="/admin/creategroup" className="text-red-500">
+      グル－プ作成
+    </Link>*/

@@ -1,5 +1,10 @@
 import { useState } from 'react';
 import { axiosInstance } from '../api/axiosInstance';
+import { Card, CardContent } from "@/components/ui/card"
+import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import AppLayout from '../components/AppLayout'
 
 export function PostForm() {
   const [text, setText] = useState('');
@@ -30,8 +35,36 @@ export function PostForm() {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl mb-4">新規投稿</h2>
+    <>
+    <AppLayout>
+ <Card className="max-w-4xl w-full mt-20 mb-8 shadow-md">
+  <CardContent className="p-8 space-y-6">
+    <h2 className="text-2xl font-bold">新規投稿</h2>
+
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <Textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="投稿内容を入力してください"
+        rows={4}
+        className="resize-none"
+      />
+
+      <Input type="file" accept="image/*" onChange={handleImageChange} />
+
+      <Button type="submit" className="w-full">
+        投稿する
+      </Button>
+    </form>
+  </CardContent>
+</Card>
+ </AppLayout>
+</>
+  );
+}
+
+/*<div className="p-4">
+      <h2 className="text-2xl font-bold mb-4">新規投稿</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <textarea
@@ -49,6 +82,4 @@ export function PostForm() {
           投稿する
         </button>
       </form>
-    </div>
-  );
-}
+    </div>*/

@@ -21,8 +21,8 @@ class PrivateMessageSent implements ShouldBroadcast
      public function __construct($message, $fromUserId, $toUserId)
     {
         $this->message = $message;
-        $this->fromUserId = $fromUserId;
-        $this->toUserId = $toUserId;
+        $this->from_user_id = $fromUserId;
+        $this->to_user_id = $toUserId;
     }
    
     /*public function broadcastOn()

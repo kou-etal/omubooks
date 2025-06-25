@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { axiosInstance } from '../api/axiosInstance';
 import { PrivateMessage } from '../components/PrivateMessage';
 import { MessageHistory } from '../components/MessageHistory';
+import AppLayout from '../components/AppLayout'
 
 export const UserChatPage = () => {
   const { targetUserId } = useParams();
@@ -33,6 +34,7 @@ export const UserChatPage = () => {
   }
 
   return (
+    <AppLayout>
     <div>
     <MessageHistory
       currentUserId={currentUserId}
@@ -43,5 +45,6 @@ export const UserChatPage = () => {
       targetUserId={targetUserId}
     />
     </div>
+    </AppLayout>
   );
 };

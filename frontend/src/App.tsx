@@ -28,7 +28,7 @@ export function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<ProductList/>} />
+        <Route path="/" element={<PostList/>} />
         <Route path="/products/:id" element={<ProductDetails/>} />
         <Route path="/cart" element={<CartList/>} />
         <Route path="/register" element={<RegisterForm/>} />
