@@ -35,9 +35,6 @@ export default function AppLayout({ children }) {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="bg-blue-700 text-white">
             <DropdownMenuItem asChild>
-              <Link to="/chat" className="hover:bg-gray-700">全体チャット</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
               <Link to="/users" className="hover:bg-gray-700">個人チャット</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>

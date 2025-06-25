@@ -26,6 +26,7 @@ use App\Http\Controllers\VerifyEmailController;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware(['auth:sanctum']);
+Route::get('/followings/users', [FollowController::class, 'followingsUsers'])->middleware('auth:sanctum');
 
 Route::post('/register',[RegisterApiController::class, 'register']);
 

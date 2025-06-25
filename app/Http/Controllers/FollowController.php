@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Follow;
+use App\Models\User;
 
 class FollowController extends Controller
 {
@@ -32,4 +33,17 @@ class FollowController extends Controller
         $isFollowing = auth()->user()->followings()->where('followed_id', $userId)->exists();
         return response()->json(['following' => $isFollowing]);
     }
+    public function followingsUsers(Request $request)
+{
+    $user = $request->user();
+
+    $users = User::whereIn('id', function ($query) use ($user) {
+        $query->select('followed_id')
+              ->from('follows')
+              ->where('follower_id', $user->id);
+    })->get(['id', 'name']);
+
+    return response()->json($users);
+}
+
 }
