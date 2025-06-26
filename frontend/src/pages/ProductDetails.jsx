@@ -2,6 +2,7 @@ import { useParams ,Link} from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {CartAddButton} from '../components/CartAddButton';
 import axios from 'axios';
+import { axiosInstance } from '../api/axiosInstance';
 
 
 
@@ -13,7 +14,7 @@ export function ProductDetails(){
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`https://mysns.test/api/products/${id}`);
+        const res = await axiosInstance.get(`/api/products/${id}`);
         setProduct(res.data.product);
       } catch (error) {
         console.error('データ取得エラー:', error);

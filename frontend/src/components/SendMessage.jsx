@@ -6,7 +6,7 @@ export function SendMessage(){
     const handleSubmit= async (e) => {
     e.preventDefault();
     try {
-    await axiosInstance.post('https://mysns.test/api/send-message', {message});
+    await axiosInstance.post('/api/send-message', {message});
     } catch (err) {
       console.error('送信失敗', err.response?.data);
     }

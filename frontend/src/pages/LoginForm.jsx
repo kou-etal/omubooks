@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AppLayout from '../components/AppLayout';
+import { axiosInstance } from '../api/axiosInstance';
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,10 +16,10 @@ export function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try{
-    await axios.get('https://mysns.test/sanctum/csrf-cookie',{
+    await axiosInstance.get('/sanctum/csrf-cookie',{
                 withCredentials: true
             });
-    const res=await axios.post("https://mysns.test/login", {
+    const res=await axiosInstance.post("/login", {
     email,
     password,
     password_confirmation: password

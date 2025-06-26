@@ -16,8 +16,8 @@ export function RegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try{
-    await axiosInstance.get('https://mysns.test/sanctum/csrf-cookie');
-    const res=await axiosInstance.post("https://mysns.test/api/register", {
+    await axiosInstance.get('/sanctum/csrf-cookie');
+    const res=await axiosInstance.post("/api/register", {
     name,
     email,
     password,

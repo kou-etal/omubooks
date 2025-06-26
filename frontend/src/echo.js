@@ -14,7 +14,7 @@ const echo = new Echo({
   authorizer: (channel, options) => {
     return {
       authorize: (socketId, callback) => {
-        axiosInstance.post('https://mysns.test/my-broadcast-auth', {
+        axiosInstance.post('/my-broadcast-auth', {
           socket_id: socketId,
           channel_name: channel.name,
         }, {

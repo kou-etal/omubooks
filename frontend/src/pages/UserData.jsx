@@ -10,7 +10,7 @@ export function UserData() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axiosInstance.get('https://mysns.test/api/users');
+        const res = await axiosInstance.get('/api/users');
         setUsers(res.data.userData);
       } catch (error) {
         console.error('データ取得エラー:', error);

@@ -9,7 +9,7 @@ export function AdminLink() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axiosInstance.get('https://mysns.test/api/user');
+        const res = await axiosInstance.get('/api/user');
         setUser(res.data);
       } catch (error) {
         console.error('ユーザー情報取得エラー:', error);

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { axiosInstance } from '../api/axiosInstance';
  export function TeRegisterForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -11,8 +12,8 @@ import axios from 'axios';
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.get('https://mysns.test/sanctum/csrf-cookie');
-      const res = await axios.post("https://mysns.test/api/register", {
+      await axiosInstance.get('/sanctum/csrf-cookie');
+      const res = await axiosInstance.post("/api/register", {
         name,
         email,
         password,

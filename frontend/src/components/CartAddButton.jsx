@@ -18,7 +18,7 @@ export const CartAddButton=(props) =>{
 
   const handleAddToCart = async () => {
     try {
-      const res=await axiosInstance.post(`https://mysns.test/api/cart/add/${productId}`, {quantity});
+      const res=await axiosInstance.post(`/api/cart/add/${productId}`, {quantity});
       setMessage('追加しました');
       setCart(res.data.cart);
       setTimeout(() => navigate('/'), 1000);

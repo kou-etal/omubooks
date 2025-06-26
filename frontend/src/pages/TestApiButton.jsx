@@ -5,7 +5,7 @@ import {axiosInstance} from '../api/axiosInstance';
 export function TestApiButton() {
     const handleClick = async () => {
         try {
-            const res = await axiosInstance.get('https://mysns.test/api/user');
+            const res = await axiosInstance.get('/api/user');
             console.log('ユーザー情報:', res.data);
         } catch (err) {
             console.error('APIエラー:', err.response?.data);

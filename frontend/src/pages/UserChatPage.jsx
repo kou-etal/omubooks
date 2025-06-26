@@ -13,7 +13,7 @@ export const UserChatPage = () => {
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
-        const response = await axiosInstance.get('https://mysns.test/api/user');
+        const response = await axiosInstance.get('/api/user');
         setCurrentUserId(response.data.id); // userID
       } catch (error) {
         console.error('ユーザー情報取得失敗:', error);

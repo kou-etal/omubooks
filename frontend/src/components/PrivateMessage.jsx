@@ -45,7 +45,7 @@ export const PrivateMessage=({ currentUserId, targetUserId })=>{
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axiosInstance.post('https://mysns.test/api/send-private-message',{input,targetUserId});
+            const res = await axiosInstance.post('/api/send-private-message',{input,targetUserId});
             if (res.status === 200) {
                 setInput('');
             }

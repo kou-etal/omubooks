@@ -11,7 +11,7 @@ export function LogoutTest() {
   useEffect(() => {
     const logoutUser = async () => {
       try {
-        await axiosInstance.post('https://mysns.test/logout');
+        await axiosInstance.post('/logout');
         setMessage('ログアウト成功');
       } catch (err) {
         console.error('ログアウト失敗', err.response?.data);

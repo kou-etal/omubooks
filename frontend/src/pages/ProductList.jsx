@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {AdminLink} from '../components/AdminLink';
 import axios from 'axios';
+import { axiosInstance } from '../api/axiosInstance';
 import AppLayout from '../components/AppLayout'
 
 export function ProductList() {
@@ -12,7 +13,7 @@ export function ProductList() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get('https://mysns.test/api/products');
+        const res = await axiosInstance.get('/api/products');
         setProducts(res.data.products);
         /*setWeather(res.data.weather);*/
       } catch (error) {

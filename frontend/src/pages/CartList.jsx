@@ -9,7 +9,7 @@ export function CartList() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axiosInstance.get('https://mysns.test/api/cart');
+        const res = await axiosInstance.get('/api/cart');
         setCarts(res.data.cart);
       } catch (error) {
         console.error('データ取得エラー:', error);

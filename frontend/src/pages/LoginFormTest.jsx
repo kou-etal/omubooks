@@ -16,7 +16,7 @@ export function LoginFormTest() {
     e.preventDefault();
     try {
       await axiosInstance.get('/sanctum/csrf-cookie');
-      await axiosInstance.post('https://mysns.test/login', { email, password });
+      await axiosInstance.post('/login', { email, password });
       setMessage('ログイン成功');
       setTimeout(() => navigate('/'), 1000);
     } catch (err) {
