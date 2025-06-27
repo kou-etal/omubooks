@@ -1,1 +1,1 @@
-export const FRONTEND_URL = "https://mysns.test";
+export const APP_URL = "https://mysns.test";

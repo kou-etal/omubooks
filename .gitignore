@@ -33,6 +33,8 @@ frontend/dist-ssr/
 frontend/.env
 frontend/.vite
 frontend/*.local
+frontend/vite.config.ts
+
 
 # OS-specific files
 .DS_Store

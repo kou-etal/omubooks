@@ -1,4 +1,4 @@
-import { FRONTEND_URL } from '../components/config';
+import { APP_URL } from '../components/config';
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +16,7 @@ export function VerifyEmail() {
       try {
         const queryString = searchParams.toString();
         const baseUrl = import.meta.env.VITE_APP_URL;
-        const url = `${FRONTEND_URL}/api/email/verify/${id}/${hash}?${queryString}`;
+        const url = `${APP_URL}/api/email/verify/${id}/${hash}?${queryString}`;
         const res = await axiosInstance.get(url, { withCredentials: true });
         setMessage(res.data.message);
          setTimeout(()=>{
