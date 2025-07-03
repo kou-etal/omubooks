@@ -15,8 +15,13 @@ export const UserChatPage = () => {
       try {
         const response = await axiosInstance.get('/api/user');
         setCurrentUserId(response.data.id); // userID
-      } catch (error) {
-        console.error('ユーザー情報取得失敗:', error);
+      } catch (err) {
+         if (err.response?.status === 401) {
+        alert('ログインしてください');
+      }
+      else{
+      console.error('失敗', err);
+    }
       } finally {
         setLoading(false);
       }

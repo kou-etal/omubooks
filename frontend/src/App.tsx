@@ -1,8 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import {ProductList} from './pages/ProductList';
 import {RegisterForm} from './pages/RegisterForm';
-import {LoginForm} from './pages/LoginForm';
-import {Logout} from './pages/Logout';
 import {LogoutTest} from './pages/LogoutTest';
 import {LoginFormTest} from './pages/LoginFormTest';
 import {TestApiButton} from './pages/TestApiButton';

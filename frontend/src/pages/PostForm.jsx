@@ -30,8 +30,13 @@ export function PostForm() {
       setImageFile(null);
       alert('投稿完了！');
     } catch (err) {
+      if (err.response?.status === 401) {
+        alert('ログインしてください');
+      }
+      else{
       console.error('投稿失敗', err);
     }
+  }
   };
 
   return (

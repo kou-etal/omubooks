@@ -39,7 +39,7 @@ class PostApiController extends Controller
 {
     $request->validate([
         'text' => 'nullable|string|max:1000',
-        'images.*' => 'image|max:2048',
+        'images.*' => 'image|max:5000',
     ]);
 
     $user = $request->user();

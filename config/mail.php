@@ -24,7 +24,7 @@ return [
     | Here you may configure all of the mailers used by your application plus
     | their respective settings. Several examples have been configured for
     | you and you are free to add your own as your application requires.
-    |
+     |
     | Laravel supports a variety of mail "transport" drivers that can be used
     | when delivering an email. You may specify which one you're using for
     | your mailers below. You may also add additional mailers if needed.
@@ -48,6 +48,9 @@ return [
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
+        'mailgun' => [
+            'transport' => 'mailgun',
+              ],
 
         'ses' => [
             'transport' => 'ses',
@@ -73,7 +76,7 @@ return [
         'log' => [
             'transport' => 'log',
             'channel' => env('MAIL_LOG_CHANNEL'),
-        ],
+             ],
 
         'array' => [
             'transport' => 'array',
@@ -98,7 +101,7 @@ return [
         ],
 
     ],
-
+    
     /*
     |--------------------------------------------------------------------------
     | Global "From" Address

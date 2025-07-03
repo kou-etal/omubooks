@@ -92,8 +92,8 @@ Route::middleware('auth:sanctum')->get('/posts/following', [PostApiController::c
 Route::middleware('auth:sanctum')->post('/posts', [PostApiController::class, 'store']);
 Route::middleware('auth:sanctum')->post('/posts/{post}/like', [PostApiController::class, 'like']);
 
-Route::get('/email/verify/{id}/{hash}', VerifyEmailController::class)
-    ->middleware([/*'signed',*/ 'throttle:6,1'])
+Route::get('/email/verify/{id}/{hash}',VerifyEmailController::class)
+    ->middleware(['throttle:6,1'])
     ->name('verification.verify');
 
 //Route::post('/my-broadcast-auth', [PusherAuthController::class, 'authenticate']);

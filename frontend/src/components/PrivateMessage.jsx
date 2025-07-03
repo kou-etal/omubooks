@@ -18,7 +18,7 @@ export const PrivateMessage=({ currentUserId, targetUserId })=>{
  useEffect(() => {
   const channelName = `private-chat.${user1}.${user2}`;
 
-  axios.get('https://mysns.test/sanctum/csrf-cookie', {
+  axiosInstance.get('/sanctum/csrf-cookie',{
     withCredentials: true,
   }).then(() => {
     echo.private(channelName)

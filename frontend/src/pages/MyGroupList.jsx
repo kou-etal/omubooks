@@ -8,15 +8,21 @@ export function MyGroupList() {
    const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axiosInstance.get('/api/my-groups')
-      .then(res => {
-        setGroups(res.data);
-         setLoading(false);
-  })
-      .catch(err => console.error('グループ取得失敗:', err));
-  }, []);
-
-   if (loading) return (
+  axiosInstance.get('/api/my-groups')
+    .then(res => {
+      setGroups(res.data);
+      setLoading(false);
+    })
+    .catch(err => {
+      if (err.response?.status === 401) {
+        alert('ログインしてください');
+      } else {
+        console.error('グループ取得失敗:', err);
+      }
+      setLoading(false); // エラー時でも読み込み中を解除
+    });
+}, []);
+ if (loading) return (
     <div className="min-h-screen flex justify-center text-center items-center">
       <p className="text-3xl font-light tracking-widest uppercase text-gray-500 animate-pulse">読み込み中...</p>
     </div>
@@ -41,7 +47,7 @@ export function MyGroupList() {
               className="text-blue-600 hover:underline font-medium"
             >
               {group.name}
-            </Link>
+               </Link>
           </li>
         ))}
       </ul>

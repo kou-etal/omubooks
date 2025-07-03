@@ -100,7 +100,7 @@ class ProfileApiController extends Controller
     public function uploadImage(Request $request)
 {
     $request->validate([
-        'image' => 'required|image|max:2048',
+        'image' => 'required|image|max:5000',
     ]);
 
     $path = $request->file('image')->store('profile_images', 'public');
@@ -127,3 +127,5 @@ class ProfileApiController extends Controller
     return response()->json(['profile_image' => $user->profile_image], 200);
 }*/
 }
+
+

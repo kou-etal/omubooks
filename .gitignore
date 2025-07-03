@@ -34,6 +34,7 @@ frontend/.env
 frontend/.vite
 frontend/*.local
 frontend/vite.config.ts
+frontend/src/components/config.jsx
 
 
 # OS-specific files
