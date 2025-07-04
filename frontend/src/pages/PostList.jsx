@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
 import { axiosInstance } from '../api/axiosInstance';
 import AppLayout from '../components/AppLayout'
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import 'dayjs/locale/ja';
+
+dayjs.extend(relativeTime);
+dayjs.locale('ja');
+
 
 export function PostList() {
   const [posts, setPosts] = useState([]);
@@ -37,6 +44,7 @@ export function PostList() {
 
 
   return (
+
 <AppLayout>
   <div className="w-full max-w-2xl mx-auto space-y-6 p-4">
     <h2 className="text-2xl font-bold mb-4">投稿一覧</h2>
@@ -50,7 +58,7 @@ export function PostList() {
             src={post.user.profile_image}
             alt="プロフィール画像"
             className="w-10 h-10 rounded-full object-cover mr-2"
-             />
+          />
           <span className="font-semibold">{post.user.name}</span>
         </div>
 
@@ -72,19 +80,21 @@ export function PostList() {
         )}
 
         {/* いいね */}
-        <div className="flex items-center">
+        <div className="flex items-center text-sm text-gray-600">
           <button
             onClick={() => toggleLike(post.id)}
             className="text-2xl mr-2"
-             >
+          >
             {post.liked_by_me ? '❤️' : '♡'}
           </button>
-          <span>{post.likes_count}</span>
+          <span className="mr-4">{post.likes_count}</span>
+          <span>{dayjs(post.created_at).fromNow()}</span>
         </div>
       </div>
     ))}
   </div>
 </AppLayout>
+
 
   );
 }
