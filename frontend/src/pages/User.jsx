@@ -8,16 +8,20 @@ export function User() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axiosInstance.get('/api/followings/users');
-        setUsers(res.data);
-      } catch (error) {
-        console.error('データ取得エラー:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const fetchData = async () => {
+  try {
+    const res = await axiosInstance.get('/api/followings/users');
+    setUsers(res.data);
+  } catch (err) {
+    if (err.response?.status === 401) {
+      alert('ログインしてください');
+    } else {
+      console.error('ユーザー取得失敗:', err);
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
     fetchData();
   }, []);

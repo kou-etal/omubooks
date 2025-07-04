@@ -42,7 +42,12 @@ export function ProfileEdit() {
 
     console.log('アップロード成功:', res.data);
   } catch (err) {
-    console.error('画像アップロード失敗', err);
+      if (err.response?.status === 401) {
+        alert('ログインしてください');
+      }
+      else{
+      console.error('画像アップロード失敗', err);
+    }
   }
 };
 
@@ -53,8 +58,13 @@ export function ProfileEdit() {
       await axiosInstance.post('/api/profile', profile);
       alert('プロフィール更新完了！');
     } catch (err) {
+      if (err.response?.status === 401) {
+        alert('ログインしてください');
+      }
+      else{
       console.error('更新失敗', err);
     }
+  }
   };
 
   return (
