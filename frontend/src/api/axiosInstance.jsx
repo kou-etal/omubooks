@@ -5,7 +5,4 @@ export const axiosInstance = axios.create({
   baseURL: APP_URL,
   withCredentials: true,
   withXSRFToken: true,
-  headers: {
-    "Access-Control-Allow-Origin": "*",
-  },
 })
