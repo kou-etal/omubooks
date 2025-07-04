@@ -15,11 +15,17 @@ export function UserFollow() {
   }, []);
 
   useEffect(() => {
-    axiosInstance.get('/api/users')
-      .then(res => setUsers(res.data))
-      .catch(err => console.error('ユーザー取得失敗', err))
-      .finally(() => setLoading(false));
-  }, []);
+  axiosInstance.get('/api/users')
+    .then(res => setUsers(res.data))
+    .catch(err => {
+      if (err.response?.status === 401) {
+        alert('ログインしてください');
+      } else {
+        console.error('ユーザー取得失敗:', err);
+      }
+    })
+    .finally(() => setLoading(false));
+}, []);
 
   const handleFollow = async (userId) => {
     try {
