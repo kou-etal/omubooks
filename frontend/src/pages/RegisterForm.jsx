@@ -11,10 +11,12 @@ export function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({});
     try{
     await axiosInstance.get('/sanctum/csrf-cookie');
     const res=await axiosInstance.post("/api/register", {
@@ -28,6 +30,9 @@ export function RegisterForm() {
     console.log(res.data.message);
   }catch (err) {
       console.error('登録失敗:', err.response?.data)
+      if (err.response?.data?.errors) {
+        setErrors(err.response.data.errors);
+      }
   }
 };
 
@@ -52,6 +57,7 @@ export function RegisterForm() {
           placeholder="メールアドレス"
           className="w-full border p-2 rounded bg-blue-100"
         />
+                {errors.email && <p className="text-red-500 text-sm">{errors.email[0]}</p>}
         <input
           type="password"
           value={password}
@@ -59,6 +65,7 @@ export function RegisterForm() {
           placeholder="パスワード"
           className="w-full border p-2 rounded bg-blue-100"
         />
+            {errors.password && <p className="text-red-500 text-sm">{errors.password[0]}</p>}
         <button
           type="submit"
           className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
