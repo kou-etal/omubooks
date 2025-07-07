@@ -13,7 +13,8 @@ class CustomVerifyEmail extends VerifyEmail
     protected function verificationUrl($notifiable)
     {
         // ReactのURLに書き換え（ここが重要）
-        $frontendUrl = 'https://mysns.test:5173/email/verify';
+      $frontendUrl = config('app.frontend_url') . '/email/verify';
+
 
         $temporarySignedUrl = URL::temporarySignedRoute(
             'verification.verify',
