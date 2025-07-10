@@ -17,11 +17,11 @@ export function LoginFormTest() {
     try {
       await axiosInstance.get('/sanctum/csrf-cookie');
       await axiosInstance.post('/login', { email, password });
-      setMessage('ログイン成功');
+      setMessage('Log in successful.');
       setTimeout(() => navigate('/'), 1000);
     } catch (err) {
       console.error('ログイン失敗', err.response?.data);
-      setMessage('ログイン失敗');
+      setMessage('Login failed.');
     }
   };
 
@@ -29,25 +29,25 @@ export function LoginFormTest() {
       <AppLayout>
       <Card className="max-w-4xl w-full mt-20 mb-8 shadow-md">
         <CardContent className="p-8 space-y-6">
-          <h2 className="text-2xl font-bold">ログイン</h2>
+          <h2 className="text-2xl font-bold">Login</h2>
     
           <form onSubmit={handleSubmit} className="space-y-6">
             <Input
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="メールアドレス"
+              placeholder="Email address"
             />
     
             <Input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="パスワード"
+              placeholder="Password"
             />
     
             <Button type="submit" className="w-full">
-              ログイン
+              Log in
             </Button>
           </form>
         </CardContent>

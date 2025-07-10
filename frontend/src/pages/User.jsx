@@ -14,7 +14,7 @@ export function User() {
     setUsers(res.data);
   } catch (err) {
     if (err.response?.status === 401) {
-      alert('ログインしてください');
+      alert('Please log in.');
     } else {
       console.error('ユーザー取得失敗:', err);
     }
@@ -28,7 +28,7 @@ export function User() {
 
   if (loading) return (
     <div className="min-h-screen flex justify-center text-center items-center">
-     <p className="text-3xl font-light tracking-widest uppercase text-gray-500 animate-pulse">読み込み中...</p>
+     <p className="text-3xl font-light tracking-widest uppercase text-gray-500 animate-pulse">Loading...</p>
     </div>
   );
 
@@ -36,10 +36,10 @@ export function User() {
     <AppLayout>
    <div className="w-full px-4">
     <div className="max-w-screen-lg mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">個人チャット</h1>
+      <h1 className="text-2xl font-bold mb-4">Direct Message</h1>
       <div className="h-px bg-gray-300 mb-16" />
       {users.length === 0 ? (
-        <p className="text-center text-gray-500">フォロー中のユーザーがいません。</p>
+        <p className="text-center text-gray-500">	You’re not following anyone yet.</p>
       ) : (
         <ul className="grid grid-cols-3 gap-4">
           {users.map(user => (

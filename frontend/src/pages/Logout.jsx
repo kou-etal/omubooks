@@ -15,7 +15,7 @@ const [message, setMessage] = useState("");
                 setMessage(res.data.message);
             } catch (err) {
                 console.error('ログアウトできませんでした', err.response?.data);
-                setMessage('ログアウトできませんでした');
+                setMessage('Log out failed.');
             }
         };
 
@@ -25,7 +25,7 @@ const [message, setMessage] = useState("");
 return(
     <div>
     <p>{message}</p>
-    <Link to="/">トップページ</Link>
+    <Link to="/">Top</Link>
     </div>
 );
 }

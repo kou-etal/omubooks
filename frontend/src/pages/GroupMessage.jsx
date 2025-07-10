@@ -4,7 +4,7 @@ import {ChatComponent} from '../components/ChatComponent';
 export const GroupMessage = () => {
     return (
         <div>
-            <h1>リアルタイムチャット</h1>
+            <h1>Real-time chat</h1>
             <SendMessage />
             <ChatComponent />
         </div>

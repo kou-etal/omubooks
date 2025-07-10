@@ -43,7 +43,7 @@ export function ProfileEdit() {
     console.log('アップロード成功:', res.data);
   } catch (err) {
       if (err.response?.status === 401) {
-        alert('ログインしてください');
+        alert('Please log in.');
       }
       else{
       console.error('画像アップロード失敗', err);
@@ -56,10 +56,10 @@ export function ProfileEdit() {
     e.preventDefault();
     try {
       await axiosInstance.post('/api/profile', profile);
-      alert('プロフィール更新完了！');
+      alert('Profile updated successfully!');
     } catch (err) {
       if (err.response?.status === 401) {
-        alert('ログインしてください');
+        alert('Please log in.');
       }
       else{
       console.error('更新失敗', err);
@@ -72,11 +72,11 @@ export function ProfileEdit() {
  <Card className="max-w-4xl w-full mt-20 mb-8 shadow-md">
   <CardContent className="p-8 space-y-6">
     <div className="flex justify-between items-center">
-      <h2 className="text-2xl font-bold">プロフィール編集</h2>
+      <h2 className="text-2xl font-bold">Edit Profile</h2>
       {profile.profile_image && (
         <img
           src={profile.profile_image}
-          alt="プロフィール画像"
+          alt="Profile Picture"
           className="w-20 h-20 rounded-full object-cover"
         />
       )}
@@ -84,7 +84,7 @@ export function ProfileEdit() {
     
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <Label>画像選択:</Label>
+        <Label>	Select Image:</Label>
         <Input type="file" onChange={handleImageChange} />
         <Button
           type="button"
@@ -92,19 +92,19 @@ export function ProfileEdit() {
           className="mt-1"
           variant="secondary"
         >
-          アップロード
+          Upload
         </Button>
       </div>
       <div>
-        <Label>名前:</Label>
+        <Label>Name:</Label>
         <Input name="name" value={profile.name} onChange={handleChange} />
       </div>
       <div>
-        <Label>自己紹介:</Label>
+        <Label>	Bio:</Label>
         <Textarea name="bio" value={profile.bio} onChange={handleChange} />
       </div>
       <Button type="submit" className="w-full">
-        保存
+      	Save
       </Button>
     </form>
   </CardContent>

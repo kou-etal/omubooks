@@ -17,7 +17,7 @@ export const UserChatPage = () => {
         setCurrentUserId(response.data.id); // userID
       } catch (err) {
          if (err.response?.status === 401) {
-        alert('ログインしてください');
+        alert('Please log in.');
       }
       else{
       console.error('失敗', err);
@@ -31,11 +31,13 @@ export const UserChatPage = () => {
   }, []);
 
   if (loading) {
-    return <div>読み込み中...</div>;
+    return <div>Loading...</div>;
   }
 
   if (!currentUserId) {
-    return <div>ログインユーザーが取得できませんでした</div>;
+    return <div>Failed to retrieve the logged-in user.
+
+</div>;
   }
 
   return (

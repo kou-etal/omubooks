@@ -19,7 +19,7 @@ export const MessageHistory = ({ currentUserId, targetUserId }) => {
     return (
       <div key={idx} className={`flex flex-col ${isSelf ? 'items-end' : 'items-start'}`}>
         <span className="text-xs text-gray-500 mb-1">
-          {isSelf ? 'あなた' : `ユーザー${msg.from_user_id}`}
+          {isSelf ? 'You' : `User${msg.from_user_id}`}
         </span>
         <div
           className={`max-w-md px-4 py-2 rounded-lg shadow text-sm break-words ${

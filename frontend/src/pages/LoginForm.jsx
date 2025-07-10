@@ -42,25 +42,25 @@ export function LoginForm() {
    <AppLayout>
   <Card className="max-w-4xl w-full mt-20 mb-8 shadow-md">
     <CardContent className="p-8 space-y-6">
-      <h2 className="text-2xl font-bold">ログイン</h2>
+      <h2 className="text-2xl font-bold">Log in</h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <Input
           type="text"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="メールアドレス"
+          placeholder="Email address"
         />
 
         <Input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="パスワード"
+          placeholder="Password"
         />
 
         <Button type="submit" className="w-full">
-          ログイン
+          Log in
         </Button>
       </form>
     </CardContent>

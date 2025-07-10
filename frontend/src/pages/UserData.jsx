@@ -30,14 +30,14 @@ export function UserData() {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">ユーザー一覧</h1>
+      <h1 className="text-2xl font-bold mb-4">User List</h1>
       <div className="h-px bg-gray-300 mb-16"/>
 <ul className="grid grid-cols-3 gap-4">
   {users.map(user => (
     <li key={user.id} className="border p-4">
       <h2 className="font-semibold">{user.name}</h2>
-      <p>フォロー</p>
-      <p>フォローをやめる</p>
+      <p>Follow</p>
+      <p>Unfollow</p>
     </li>
   ))}
 </ul>

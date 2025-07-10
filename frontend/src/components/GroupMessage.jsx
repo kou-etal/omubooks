@@ -49,14 +49,14 @@ export const GroupMessage = ({ currentUserId, groupId })  => {
  <div className="w-full flex flex-col max-w-2xl mx-auto h-screen relative">
       {/* メッセージ表示部 */}
       <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-gray-50">
-        <h2 className="text-xl font-bold mb-2">グループチャット</h2>
+        <h2 className="text-xl font-bold mb-2">Group Chat</h2>
 
         {messages.map((msg, idx) => {
           const isSelf = msg.user_id === currentUserId;
           return (
             <div key={idx} className={`flex flex-col ${isSelf ? 'items-end' : 'items-start'}`}>
               <span className="text-xs text-gray-500 mb-1">
-                {isSelf ? 'あなた' : `ユーザー${msg.user_id}`}
+                {isSelf ? 'You' : `User${msg.user_id}`}
               </span>
               <div
                 className={`max-w-md px-4 py-2 rounded-lg shadow text-sm break-words ${
@@ -81,7 +81,7 @@ export const GroupMessage = ({ currentUserId, groupId })  => {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="メッセージを入力"
+          placeholder="Enter your message"
           className="border p-2 flex-1 rounded"
         />
         <button type="submit" className="bg-blue-500 text-white px-4 rounded">

@@ -12,10 +12,10 @@ export function LogoutTest() {
     const logoutUser = async () => {
       try {
         await axiosInstance.post('/logout');
-        setMessage('ログアウト成功');
+        setMessage('Log out successful.');
       } catch (err) {
         console.error('ログアウト失敗', err.response?.data);
-        setMessage('ログアウト失敗');
+        setMessage('Logout failed.');
       }
     };
 
@@ -28,7 +28,7 @@ export function LogoutTest() {
         <CardContent className="p-8 space-y-6 text-center">
           <h2 className="text-2xl font-bold">{message}</h2>
           <Button asChild className="w-full">
-            <Link to="/">トップページへ戻る</Link>
+            <Link to="/">Top</Link>
           </Button>
         </CardContent>
       </Card>

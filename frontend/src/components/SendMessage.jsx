@@ -16,8 +16,8 @@ export function SendMessage(){
 return(
     <div>
     <form onSubmit={handleSubmit}>
-        <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} placeholder="メッセージ" />
-        <button type="submit">送信</button>
+        <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} placeholder="message" />
+        <button type="submit">Send</button>
         </form>
     </div>
 );

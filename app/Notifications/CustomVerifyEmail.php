@@ -33,9 +33,10 @@ class CustomVerifyEmail extends VerifyEmail
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('メール認証のお願い')
-            ->line('以下のボタンからメール認証を完了させてください。')
-            ->action('メールを認証する', $this->verificationUrl($notifiable))
-            ->line('このメールに覚えがない場合は無視してください。');
+    ->subject('Email Verification Request')
+    ->line('Please click the button below to verify your email address.')
+    ->action('Verify Email', $this->verificationUrl($notifiable))
+    ->line('If you did not request this email, please ignore it.');
+
     }
 }

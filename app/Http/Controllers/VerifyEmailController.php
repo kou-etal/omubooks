@@ -19,14 +19,15 @@ class VerifyEmailController extends Controller
             throw new AuthorizationException();
         }
 
-        if ($user->hasVerifiedEmail()) {
-            return response()->json(['message' => 'すでに認証済みです。']);
-        }
+       if ($user->hasVerifiedEmail()) {
+    return response()->json(['message' => 'Email has already been verified.']);
+}
 
-        $user->markEmailAsVerified();
-        event(new Verified($user));
+$user->markEmailAsVerified();
+event(new Verified($user));
 
-        return response()->json(['message' => 'メール認証が完了しました。']);
+return response()->json(['message' => 'Email verification completed successfully.']);
+
     }
 }
 

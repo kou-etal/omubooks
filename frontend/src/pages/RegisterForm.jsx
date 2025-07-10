@@ -40,21 +40,21 @@ export function RegisterForm() {
   <AppLayout>
   <div className="flex justify-center py-16 px-4">
     <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-xl space-y-6">
-      <h1 className="text-2xl font-bold text-center">新規登録</h1>
+      <h1 className="text-2xl font-bold text-center">Sign Up</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="ユーザーネーム"
+          placeholder="User name"
           className="w-full border p-2 rounded bg-blue-100"
         />
         <input
           type="text"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="メールアドレス"
+          placeholder="Email address"
           className="w-full border p-2 rounded bg-blue-100"
         />
                 {errors.email && <p className="text-red-500 text-sm">{errors.email[0]}</p>}
@@ -62,7 +62,7 @@ export function RegisterForm() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="パスワード"
+          placeholder="Password"
           className="w-full border p-2 rounded bg-blue-100"
         />
             {errors.password && <p className="text-red-500 text-sm">{errors.password[0]}</p>}
@@ -70,7 +70,7 @@ export function RegisterForm() {
           type="submit"
           className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
         >
-          登録
+          Register
         </button>
       </form>
 

@@ -15,41 +15,41 @@ export default function AppLayout({ children }) {
 
       {/* PC用ナビ（そのまま） */}
       <nav className="h-14 bg-slate-800 text-white border-b items-center justify-around px-4 hidden md:flex">
-        <Link to="/" className="text-sm font-medium">🏠 ホーム</Link>
-        <Link to="/post" className="text-sm font-medium">➕ 投稿</Link>
-        <Link to="/follow" className="text-sm font-medium">🔍 ユーザー検索</Link>
+        <Link to="/" className="text-sm font-medium">🏠 Home</Link>
+        <Link to="/post" className="text-sm font-medium">➕ Posts</Link>
+        <Link to="/follow" className="text-sm font-medium">🔍 Search Users</Link>
         <AdminLink />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="text-sm font-medium">💬 チャット ▼</Button>
+            <Button variant="ghost" className="text-sm font-medium">💬 Chat ▼</Button>
           </DropdownMenuTrigger>
            <DropdownMenuContent className="bg-blue-700 text-white">
             <DropdownMenuItem asChild>
-              <Link to="/users" className="hover:bg-gray-700">個人チャット</Link>
+              <Link to="/users" className="hover:bg-gray-700">Private Chat</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/my-groups" className="hover:bg-gray-700">グループチャット</Link>
+              <Link to="/my-groups" className="hover:bg-gray-700">Group Chat</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="text-sm font-medium">👤 プロフィール ▼</Button>
+            <Button variant="ghost" className="text-sm font-medium">👤 Profile ▼</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="bg-blue-700 text-white">
             <DropdownMenuItem asChild>
-              <Link to="/register" className="hover:bg-blue-700">新規登録</Link>
+              <Link to="/register" className="hover:bg-blue-700">Sign up</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/login" className="hover:bg-blue-700">ログイン</Link>
+              <Link to="/login" className="hover:bg-blue-700">Log in</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/edit" className="hover:bg-blue-700">プロフィール編集</Link>
+              <Link to="/edit" className="hover:bg-blue-700">Edit profile</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/logout" className="hover:bg-blue-700">ログアウト</Link>
+              <Link to="/logout" className="hover:bg-blue-700">Log out</Link>
                </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -19,7 +19,7 @@ export function UserFollow() {
     .then(res => setUsers(res.data))
     .catch(err => {
       if (err.response?.status === 401) {
-        alert('ログインしてください');
+        alert('Please log in.');
       } else {
         console.error('ユーザー取得失敗:', err);
       }
@@ -47,7 +47,7 @@ export function UserFollow() {
 
   if (loading) return (
     <div className="min-h-screen flex justify-center text-center items-center">
-  <p className="text-3xl font-light tracking-widest uppercase text-gray-500 animate-pulse">読み込み中...</p>
+  <p className="text-3xl font-light tracking-widest uppercase text-gray-500 animate-pulse">Loading...</p>
   </div>
   );
 
@@ -63,7 +63,7 @@ export function UserFollow() {
         type="text"
         value={search}
         onChange={e => setSearch(e.target.value)}
-        placeholder="ユーザー名で検索"
+        placeholder="Search by Username"
         className="border p-2 mb-4 w-full"
       />
 
@@ -73,11 +73,11 @@ export function UserFollow() {
             <h2 className="font-semibold">{user.name}</h2>
             {followedUserIds.includes(user.id) ? (
               <button onClick={() => handleUnfollow(user.id)} className="text-red-500">
-                フォロー解除
+              Unfollow
               </button>
             ) : (
               <button onClick={() => handleFollow(user.id)} className="text-blue-500">
-                フォロー
+              Follow
               </button>
             )}
           </li>

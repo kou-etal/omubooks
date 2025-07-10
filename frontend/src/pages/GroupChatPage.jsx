@@ -25,8 +25,8 @@ export const GroupChatPage = () => {
     fetchCurrentUser();
   }, []);
 
-  if (loading) return <div>読み込み中...</div>;
-  if (!currentUserId) return <div>ログインユーザーが取得できませんでした</div>;
+  if (loading) return <div>Loading...</div>;
+  if (!currentUserId) return <div>Failed to retrieve the logged-in user.</div>;
 
   return (
       <AppLayout>

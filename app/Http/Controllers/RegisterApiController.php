@@ -26,6 +26,6 @@ public function register(Request $request) {
     event(new Registered($user));
     Auth::login($user);
 
-    return response()->json(['message' => '仮登録成功、メールを送信しました', 'user' => $user]);
+    return response()->json(['message' => 'Temporary registration successful. A verification email has been sent.', 'user' => $user]);
 }
 }

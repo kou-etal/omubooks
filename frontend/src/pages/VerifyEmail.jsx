@@ -8,7 +8,7 @@ import AppLayout from '../components/AppLayout';
 export function VerifyEmail() {
   const { id, hash } = useParams();
   const [searchParams] = useSearchParams();
-  const [message, setMessage] = useState("確認中...");
+  const [message, setMessage] = useState("Verifying...");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export function VerifyEmail() {
       navigate('/')
     },1000)
       } catch (e) {
-        setMessage("認証に失敗しました。");
+        setMessage("Authentication failed.");
          }
     };
     verify();
@@ -32,7 +32,7 @@ export function VerifyEmail() {
 return (
   <AppLayout>
     <div className="flex justify-center items-center h-[60vh]">
-      <div className="bg-gray-100 text-gray-800 text-xl font-medium px-6 py-4 rounded shadow-sm border border-gray-300">        {message || '認証が完了しました'}
+      <div className="bg-gray-100 text-gray-800 text-xl font-medium px-6 py-4 rounded shadow-sm border border-gray-300">        {message || 'Authentication completed successfully.'}
       </div>
     </div>
   </AppLayout>

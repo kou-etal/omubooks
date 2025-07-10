@@ -31,12 +31,12 @@ export function PostForm() {
 
       setText('');
       setImageFiles([]);
-      alert('投稿完了！');
+      alert('Post submitted successfully.');
     } catch (err) {
       if (err.response?.status === 401) {
-        alert('ログインしてください');
+        alert('Please log in.');
       } else {
-        console.error('投稿失敗', err);
+        console.error('Failed to submit post.', err);
       }
     }
   };
@@ -45,13 +45,13 @@ export function PostForm() {
     <AppLayout>
       <Card className="max-w-4xl w-full mt-20 mb-8 shadow-md">
         <CardContent className="p-8 space-y-6">
-          <h2 className="text-2xl font-bold">新規投稿</h2>
+          <h2 className="text-2xl font-bold">New Post</h2>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <Textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="投稿内容を入力してください"
+              placeholder="	Please enter your post content."
               rows={4}
               className="resize-none"
             />
@@ -64,7 +64,7 @@ export function PostForm() {
             />
 
             <Button type="submit" className="w-full">
-              投稿する
+              Post
             </Button>
           </form>
 

@@ -6,7 +6,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/ja';
 
 dayjs.extend(relativeTime);
-dayjs.locale('ja');
+dayjs.locale('en');
 
 
 export function PostList() {
@@ -38,7 +38,7 @@ export function PostList() {
 
    if (loading) return (
     <div className="min-h-screen flex justify-center text-center items-center">
-      <p className="text-3xl font-light tracking-widest uppercase text-gray-500 animate-pulse">読み込み中...</p>
+      <p className="text-3xl font-light tracking-widest uppercase text-gray-500 animate-pulse">Loading...</p>
     </div>
   );
 
@@ -47,7 +47,7 @@ export function PostList() {
 
 <AppLayout>
   <div className="w-full max-w-2xl mx-auto space-y-6 p-4">
-    <h2 className="text-2xl font-bold mb-4">投稿一覧</h2>
+    <h2 className="text-2xl font-bold mb-4">Post List</h2>
     <div className="h-px bg-gray-300 mb-16" />
 
     {posts.map(post => (
@@ -56,7 +56,7 @@ export function PostList() {
         <div className="flex items-center mb-2">
           <img
             src={post.user.profile_image}
-            alt="プロフィール画像"
+            alt="profile"
             className="w-10 h-10 rounded-full object-cover mr-2"
           />
           <span className="font-semibold">{post.user.name}</span>
@@ -72,7 +72,7 @@ export function PostList() {
               <img
                 key={img.id}
                 src={img.path}
-                alt="投稿画像"
+                alt="images"
                 className="w-32 h-32 object-cover rounded"
               />
             ))}
