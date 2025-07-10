@@ -51,7 +51,7 @@ export function PostForm() {
             <Textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="	Please enter your post content."
+              placeholder="Please enter your post content."
               rows={4}
               className="resize-none"
             />
