@@ -11,12 +11,16 @@ return new class extends Migration
      */
     public function up()
 {
-    Schema::create('post_images', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('post_id')->constrained()->onDelete('cascade');
-        $table->string('path'); // S3やpublic/storageに保存された画像URL
-        $table->timestamps();
-    });
+    Schema::create('listing_images', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('listing_id')
+          ->constrained('listings')
+          ->cascadeOnUpdate()
+          ->cascadeOnDelete();
+    $table->string('path'); // S3 or storage の画像URL
+    $table->timestamps();
+});
+
 }
 
     /**
@@ -27,3 +31,4 @@ return new class extends Migration
         Schema::dropIfExists('post_images');
     }
 };
+

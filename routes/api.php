@@ -3,23 +3,96 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Broadcast;
-use App\Http\Controllers\ProductApiController;
+
 use App\Http\Controllers\ProfileApiController;
-use App\Http\Controllers\CartApiController;
-use App\Http\Controllers\PurchaseApiController;
+
 use App\Http\Controllers\RegisterApiController;
-use App\Http\Controllers\ChatController;
-use App\Http\Controllers\GroupApiController;
-use App\Http\Controllers\GroupChatController;
-use App\Http\Controllers\PrivateChatController;
+
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\PusherAuthController;
-use App\Http\Controllers\MessageController;
-use App\Http\Controllers\FollowController;
-use App\Http\Controllers\PostApiController;
+
 use App\Http\Controllers\VerifyEmailController;
 
 
+
+use App\Http\Controllers\ListingsController;
+use App\Http\Controllers\MessagesController;
+use App\Http\Controllers\ReviewsController;
+use App\Http\Controllers\TradesPaymentsController;
+use App\Http\Controllers\SessionController;
+use App\Http\Controllers\TradesController;
+Route::middleware(['auth:sanctum'])->group(function () {
+
+    /* ===========================
+     * Trades（取引）
+     * =========================== */
+
+    // 自分の取引一覧（フロント：GET /api/trades）
+    Route::get('/trades', [TradesController::class, 'index']);
+
+    // 取引作成（購入ボタン）
+    // リクエスト: { listing_id }
+    // レスポンス: trade json / 作成時に運営の自動メッセージ送信（サーバ側実装）
+    Route::post('/trades', [TradesController::class, 'store']);
+
+    // 取引詳細（フロント：GET /api/trades/{id}）
+    Route::get('/trades/{trade}', [TradesController::class, 'show'])->whereNumber('trade');
+
+    // 取引完了/キャンセル（必要なら）
+    Route::post('/trades/{trade}/complete', [TradesController::class, 'complete'])->whereNumber('trade');
+    Route::post('/trades/{trade}/cancel',   [TradesController::class, 'cancel'])->whereNumber('trade');
+});
+
+Route::get('/session', [SessionController::class, 'show']);
+
+Route::middleware('auth')->group(function () {
+    // 入金確認フラグ
+    Route::post('/trades/{trade}/pay/platform', [TradesPaymentsController::class, 'markPlatformPaid']);
+    Route::post('/trades/{trade}/pay/seller',   [TradesPaymentsController::class, 'markSellerPaid']);
+});
+
+
+Route::middleware('auth')->group(function () {
+    // 受けたレビュー一覧（公開APIでもOKにしたいならauth外へ）
+    Route::get('/users/{user}/reviews', [ReviewsController::class, 'index']);
+
+    // 作成（当事者＆completed限定）
+    Route::post('/trades/{trade}/reviews', [ReviewsController::class, 'store']);
+});
+
+
+Route::middleware('auth')->group(function () {
+    // 取引ごとのDM
+    Route::get('/trades/{trade}/messages',          [MessagesController::class, 'index']);
+    Route::post('/trades/{trade}/messages',         [MessagesController::class, 'store']);
+
+    // テンプレ送信（任意機能）
+    Route::post('/trades/{trade}/messages/platform-fee-reminder',
+        [MessagesController::class, 'sendPlatformFeeReminder']); // 運営8%リマインド
+
+    Route::post('/trades/{trade}/messages/seller-charge',
+        [MessagesController::class, 'sendSellerChargeTemplate']); // 出品者92%請求テンプレ
+});
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/listings',           [ListingsController::class, 'index']);
+    Route::get('/listings/suggest',   [ListingsController::class, 'suggest']);
+    Route::get('/listings/{listing}', [ListingsController::class, 'show']);
+
+    Route::post('/listings',          [ListingsController::class, 'store']);
+    Route::patch('/listings/{listing}', [ListingsController::class, 'update']);
+    Route::delete('/listings/{listing}',[ListingsController::class, 'destroy']);
+});
+
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/me',            [ProfileApiController::class, 'showMe']);
+    Route::get('/me/edit',       [ProfileApiController::class, 'edit']);
+    Route::patch('/me',          [ProfileApiController::class, 'update']);
+    Route::post('/me/avatar',    [ProfileApiController::class, 'uploadImage']);
+});
 
 
 

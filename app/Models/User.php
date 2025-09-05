@@ -2,81 +2,83 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Notifications\CustomVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'is_admin',
         'profile_image',
         'bio',
+        'faculty',
+        'department',
+        'paypay_id',
+        'rating_avg',
+        'deals_count',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
+    protected $hidden = ['password', 'remember_token'];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'is_admin'          => 'boolean',
+        'rating_avg'        => 'float',
+        'deals_count'       => 'integer',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    /** 出品一覧 */
+    public function listings()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasMany(Listing::class);
     }
 
-    public function followings()
-{
-    return $this->belongsToMany(User::class, 'follows', 'follower_id', 'followed_id');
-}
+    /** 購入側の取引 */
+    public function buyingTrades()
+    {
+        return $this->hasMany(Trade::class, 'buyer_id');
+    }
 
-public function followers()
-{
-    return $this->belongsToMany(User::class, 'follows', 'followed_id', 'follower_id');
-}
+    /** 販売側の取引 */
+    public function sellingTrades()
+    {
+        return $this->hasMany(Trade::class, 'seller_id');
+    }
 
-public function user()
-{
-    return $this->belongsTo(User::class, 'user_id', 'id');
-}
+    /** 送信メッセージ */
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'from_user_id');
+    }
 
-public function sendEmailVerificationNotification()
-{
-    $this->notify(new CustomVerifyEmail());
-}
+    /** 受信メッセージ */
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'to_user_id');
+    }
 
-public function groups()
-{
-    return $this->belongsToMany(Group::class);
-}
+    /** 自分が付けたレビュー */
+    public function givenReviews()
+    {
+        return $this->hasMany(Review::class, 'rater_id');
+    }
 
-public function ownedGroups()
-{
-    return $this->hasMany(Group::class, 'created_by');
-}
-}
+    /** 自分が受けたレビュー */
+    public function receivedReviews()
+    {
+        return $this->hasMany(Review::class, 'ratee_id');
+    }
 
+    /** 学内限定：@omu.ac.jp 以外を弾くときに使える簡易スコープ */
+    public function scopeOmuEmail($q)
+    {
+        return $q->where('email', 'like', '%@omu.ac.jp');
+    }
+}

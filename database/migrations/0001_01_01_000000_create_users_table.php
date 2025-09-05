@@ -14,12 +14,33 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('bio')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->boolean('is_admin')->default(false); // ← 追加
+            $table->boolean('is_admin')->default(false);
+
+          
+            $table->enum('faculty', [
+                '工学部',
+                '理学部',
+                '文学部',
+                '法学部',
+                '経済学部',
+                '商学部',
+                '医学部',
+                '看護学部',
+                'その他'
+            ])->nullable()->comment('学部');
+
+            
+            $table->string('paypay_id')->nullable()->unique()->comment('PayPay ID');
+            $table->float('rating_avg', 2, 1)->default(0)->comment('評価平均（5段階）');
+            $table->unsignedInteger('deals_count')->default(0)->comment('取引件数');
+
             $table->string('profile_image')->nullable();
-            $table->text('bio')->nullable();
+            //$table->text('bio')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
         });
