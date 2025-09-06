@@ -17,10 +17,10 @@ class MessagesController extends Controller
     {
         $this->authorizeAccess($trade);
 
-        $messages = Message::with(['from:id,name', 'to:id,name'])
-            ->where('trade_id', $trade->id)
-            ->orderByDesc('id')
-            ->paginate($request->get('per_page', 30));
+        $messages = Message::with(['fromUser:id,name,profile_image', 'toUser:id,name,profile_image'])
+    ->where('trade_id', $trade->id)
+    ->orderByDesc('id')
+    ->paginate($request->get('per_page', 30));
 
         return MessageResource::collection($messages);
     }
@@ -49,7 +49,7 @@ class MessagesController extends Controller
             'is_system'    => false,
         ]);
 
-        $msg->load(['from:id,name','to:id,name']);
+        $msg->load(['fromUser:id,name,profile_image','toUser:id,name,profile_image']);
         return (new MessageResource($msg))
             ->additional(['message' => 'メッセージを送信しました。']);
     }

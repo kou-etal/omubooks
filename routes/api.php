@@ -21,6 +21,10 @@ use App\Http\Controllers\ReviewsController;
 use App\Http\Controllers\TradesPaymentsController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\TradesController;
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/trades/{trade}/messages/remind-platform-fee', [MessagesController::class, 'sendPlatformFeeReminder']);
+    Route::post('/trades/{trade}/messages/seller-charge-template', [MessagesController::class, 'sendSellerChargeTemplate']);
+});
 Route::middleware(['auth:sanctum'])->group(function () {
 
     /* ===========================
