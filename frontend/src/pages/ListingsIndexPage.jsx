@@ -1,3 +1,4 @@
+// src/pages/ListingsIndexPage.jsx
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { axiosInstance } from '../api/axiosInstance';
@@ -46,20 +47,20 @@ const FACULTIES = [
 
 function TagBadge({ children }) {
   return (
-    <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-black text-white">
+    <span className="inline-block rounded px-1 py-0.5 text-[10px] font-medium bg-black text-white">
       {children}
     </span>
   );
 }
 
 export default function ListingsIndexPage({ apiBase = '/api' }) {
-  // 検索フォーム
+  // 検索
   const [q, setQ] = useState('');
   const [suggests, setSuggests] = useState({ books: [], courses: [] });
   const [showSuggest, setShowSuggest] = useState(false);
   const [loadingSuggest, setLoadingSuggest] = useState(false);
 
-  // フィルタ（各グループ1つだけ選べるチェックボックス風UI）
+  // フィルタ
   const [fSubject, setFSubject] = useState('');
   const [fField, setFField] = useState('');
   const [fFaculty, setFFaculty] = useState('');
@@ -76,18 +77,13 @@ export default function ListingsIndexPage({ apiBase = '/api' }) {
   const inputRef = useRef(null);
   const debounceRef = useRef(null);
 
-  // 初回ロード
   useEffect(() => { fetchList(1, perPage, q); }, []);
-
-  // サジェスト（デバウンス）
   useEffect(() => {
     if (!q || q.trim().length < 2) { setSuggests({ books: [], courses: [] }); return; }
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => { getSuggest(q).catch(() => {}); }, 250);
     return () => debounceRef.current && clearTimeout(debounceRef.current);
   }, [q]);
-
-  // フィルタ変更時に自動再取得
   useEffect(() => { fetchList(1, perPage, q); /* eslint-disable-next-line */ }, [fSubject, fField, fFaculty, fWriting, perPage]);
 
   const getSuggest = async (term) => {
@@ -110,7 +106,6 @@ export default function ListingsIndexPage({ apiBase = '/api' }) {
         q: term || undefined,
         per_page: pp,
         page: p,
-        // ▼ フィルタ（値が空なら送らない）
         tag_subject: fSubject || undefined,
         tag_field:   fField   || undefined,
         tag_faculty: fFaculty || undefined,
@@ -128,7 +123,7 @@ export default function ListingsIndexPage({ apiBase = '/api' }) {
       setPage(m.current_page ?? p);
     } catch (err) {
       console.error('list fetch failed', err);
-      setError('一覧の取得に失敗しました。時間をおいて再度お試しください。');
+      setError('一覧の取得に失敗しました。');
       setItems([]); setMeta({ current_page: 1, last_page: 1, total: 0 });
     } finally {
       setLoading(false);
@@ -140,33 +135,25 @@ export default function ListingsIndexPage({ apiBase = '/api' }) {
     await fetchList(1, perPage, q);
     setShowSuggest(false);
   };
-
   const onSelectSuggest = (term) => {
     setQ(term);
     fetchList(1, perPage, term);
     setShowSuggest(false);
     inputRef.current?.blur();
   };
-
   const priceFmt = (n) => new Intl.NumberFormat('ja-JP').format(Number(n || 0));
+  const toggleSingle = (current, nextValue, setter) => setter(current === nextValue ? '' : nextValue);
+  const resetFilters = () => { setFSubject(''); setFField(''); setFFaculty(''); setFWriting(''); };
 
-  const canPrev = meta.current_page > 1;
-  const canNext = meta.current_page < meta.last_page;
-
-  const toggleSingle = (current, nextValue, setter) => {
-    setter(current === nextValue ? '' : nextValue);
-  };
-
-  const resetFilters = () => {
-    setFSubject(''); setFField(''); setFFaculty(''); setFWriting('');
-  };
+  // 「なし」は表示しないヘルパ
+  const showTag = (label) => !!(label && label !== 'なし');
 
   return (
     <AppLayout>
       <div className="max-w-7xl mx-auto mt-10 mb-16 px-6">
         <h1 className="text-3xl font-bold text-center mb-8 text-blue-900">教科書一覧</h1>
 
-        {/* 検索フォーム */}
+        {/* 検索 */}
         <form onSubmit={onSubmit} className="relative mb-6">
           <div className="flex gap-3">
             <Input
@@ -179,7 +166,6 @@ export default function ListingsIndexPage({ apiBase = '/api' }) {
             <Button type="submit" className="shrink-0 bg-blue-700 hover:bg-blue-800">検索</Button>
           </div>
 
-          {/* サジェスト */}
           {showSuggest && (suggests.books.length > 0 || suggests.courses.length > 0) && (
             <div className="absolute z-20 mt-2 w-full rounded-xl border bg-white shadow-lg p-3">
               {loadingSuggest && <div className="text-xs text-gray-500 px-2 py-1">候補を読み込み中...</div>}
@@ -207,7 +193,7 @@ export default function ListingsIndexPage({ apiBase = '/api' }) {
           )}
         </form>
 
-        {/* 件数とページサイズ */}
+        {/* 件数 / ページサイズ */}
         <div className="flex items-center justify-between mb-4 text-sm text-gray-600">
           <div>全 {meta.total} 件</div>
           <div className="flex items-center gap-2">
@@ -215,16 +201,16 @@ export default function ListingsIndexPage({ apiBase = '/api' }) {
             <select
               className="rounded-md border border-gray-300 px-2 py-1"
               value={perPage}
-              onChange={(e)=> { const v = Number(e.target.value); setPerPage(v); }}
+              onChange={(e)=> setPerPage(Number(e.target.value))}
             >
               {[10,20,30,40].map(n => <option key={n} value={n}>{n}</option>)}
             </select>
           </div>
         </div>
 
-        {/* 2カラム：左=フィルタ / 右=カード */}
+        {/* 2カラム */}
         <div className="grid grid-cols-12 gap-6">
-          {/* 左：チェックボックス縦詰み */}
+          {/* 左：フィルタ */}
           <aside className="col-span-12 md:col-span-3 lg:col-span-3">
             <Card className="border">
               <CardContent className="p-4 space-y-5">
@@ -313,10 +299,7 @@ export default function ListingsIndexPage({ apiBase = '/api' }) {
                   </ul>
                 </div>
 
-                <Button
-                  className="w-full bg-blue-700 hover:bg-blue-800"
-                  onClick={() => fetchList(1, perPage, q)}
-                >
+                <Button className="w-full bg-blue-700 hover:bg-blue-800" onClick={() => fetchList(1, perPage, q)}>
                   適用
                 </Button>
               </CardContent>
@@ -328,7 +311,7 @@ export default function ListingsIndexPage({ apiBase = '/api' }) {
             {loading ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {Array.from({ length: 8 }).map((_, i) => (
-                  <Card key={i} className="aspect-square animate-pulse bg-gray-100" />
+                  <div key={i} className="aspect-square rounded-lg bg-gray-200/80 animate-pulse" />
                 ))}
               </div>
             ) : error ? (
@@ -340,53 +323,55 @@ export default function ListingsIndexPage({ apiBase = '/api' }) {
                 {items.map((it) => {
                   const tags = it.tags || {};
                   return (
-                    <Link key={it.id} to={`/listings/${it.id}`} className="block group">
-                      <Card className="overflow-hidden border hover:shadow-md transition">
+                    <Link key={it.id} to={`/listings/${it.id}`} className="block group h-full">
+                      {/* 背景と同化・余白最小 */}
+                      <Card className="h-full bg-transparent border-0 shadow-none hover:shadow transition rounded-lg overflow-hidden">
                         {/* 画像（正方形） */}
-                        <div className="relative bg-gray-50 aspect-square">
+                        <div className="relative aspect-square">
                           {it.images?.length ? (
                             <img
                               src={it.images[0]}
                               alt={it.title}
-                              className="absolute inset-0 w-full h-full object-cover"
+                              className="absolute inset-0 h-full w-full object-cover"
                               loading="lazy"
                             />
                           ) : (
-                            <div className="absolute inset-0 w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                            <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm bg-gray-100">
                               No Image
                             </div>
                           )}
-
-                          {/* 講義名タグ（左上・黒/白文字） */}
-                          {it.course_name ? (
+                          {/* 左上：講義名タグ（黒） */}
+                          {it.course_name && (
                             <span className="absolute top-2 left-2 rounded px-1.5 py-0.5 text-[10px] font-medium bg-black text-white">
                               {it.course_name}
                             </span>
-                          ) : null}
+                          )}
                         </div>
 
-                        {/* テキスト部：タイトル横に黒タグ、下に価格タグ */}
-                        <CardContent className="px-2 py-2">
-                          {/* タイトル */}
-                          <div className="text-[13px] text-black font-normal leading-tight line-clamp-2 clamp-2">
-                            {it.title}
-                          </div>
-
-                          {/* タグ列（黒い小バッジ） */}
-                          <div className="mt-1 flex flex-wrap gap-1">
-                            {tags.subject_label && <TagBadge>{tags.subject_label}</TagBadge>}
-                            {tags.field_label && <TagBadge>{tags.field_label}</TagBadge>}
-                            {tags.faculty_label && <TagBadge>{tags.faculty_label}</TagBadge>}
-                            {typeof tags.has_writing === 'boolean' && (
-                              <TagBadge>{tags.has_writing ? '書き込みあり' : '書き込みなし'}</TagBadge>
-                            )}
-                          </div>
-
-                          {/* 価格タグ */}
-                          <div className="mt-1">
-                            <span className="inline-block text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-800 border border-gray-200">
-                              ¥ {priceFmt(it.price)}
+                        {/* 本文（上詰め＆価格は最下部） */}
+                        <CardContent className="flex flex-col px-2 pt-1 pb-2 flex-1">
+                          {/* タイトル + タグを“続けて”表示（余白極小） */}
+                          <div className="text-[13px] leading-snug text-gray-900">
+                            <span className="align-middle font-normal line-clamp-2">{it.title}</span>
+                            <span className="ml-1 inline-flex flex-wrap gap-1 align-middle">
+                              {showTag(tags.subject_label) && <TagBadge>{tags.subject_label}</TagBadge>}
+                              {showTag(tags.field_label) && <TagBadge>{tags.field_label}</TagBadge>}
+                              {showTag(tags.faculty_label) && <TagBadge>{tags.faculty_label}</TagBadge>}
+                              {/* 書き込みは “あり/なし” を出す運用のまま */}
+                              {typeof tags.has_writing === 'boolean' && (
+                                <TagBadge>{tags.has_writing ? '書き込みあり' : '書き込みなし'}</TagBadge>
+                              )}
                             </span>
+                          </div>
+
+                          {/* スペーサ（可変高さ） */}
+                          <div className="grow" />
+
+                          {/* 最下部の価格バー（さらに詰める） */}
+                          <div className="mt-auto pt-1">
+                            <div className="w-full rounded-md border border-gray-200 bg-white/70 backdrop-blur px-2 py-0.5 text-xs text-gray-900">
+                              ¥ {priceFmt(it.price)}
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
@@ -399,12 +384,12 @@ export default function ListingsIndexPage({ apiBase = '/api' }) {
             {/* ページネーション */}
             <div className="flex items-center justify-center gap-3 mt-8">
               <Button variant="outline" disabled={meta.current_page <= 1}
-                      onClick={() => meta.current_page > 1 && fetchList(page - 1, perPage, q)}>
+                onClick={() => meta.current_page > 1 && fetchList(page - 1, perPage, q)}>
                 前へ
               </Button>
               <span className="text-sm text-gray-600">{meta.current_page} / {meta.last_page}</span>
               <Button variant="outline" disabled={meta.current_page >= meta.last_page}
-                      onClick={() => meta.current_page < meta.last_page && fetchList(page + 1, perPage, q)}>
+                onClick={() => meta.current_page < meta.last_page && fetchList(page + 1, perPage, q)}>
                 次へ
               </Button>
             </div>
@@ -413,6 +398,7 @@ export default function ListingsIndexPage({ apiBase = '/api' }) {
       </div>
     </AppLayout>
   );
+
 }
 
 
