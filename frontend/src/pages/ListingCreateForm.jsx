@@ -44,7 +44,7 @@ const FACULTIES = [
 
 /**
  * 出品フォーム（multipart）
- * 送信: title, course_name, price, description?, images[] (<=3), tag_* , has_writing
+ * 送信: title, course_name, price, description?, images[] (<=3), tag_* , has_writing, status(active|draft)
  */
 export default function ListingCreateForm({ apiBase = '/api', onCreated }) {
   const navigate = useNavigate();
@@ -137,8 +137,8 @@ export default function ListingCreateForm({ apiBase = '/api', onCreated }) {
     setPreviews(next.map((f) => URL.createObjectURL(f)));
   };
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
+  // 共通送信関数：status = 'active' | 'draft'
+  const submitListing = async (status = 'active') => {
     setErrors({});
     setImageError('');
 
@@ -154,6 +154,9 @@ export default function ListingCreateForm({ apiBase = '/api', onCreated }) {
       fd.append('course_name', course.trim());
       fd.append('price', String(Math.floor(Number(price))));
       if (description.trim()) fd.append('description', description.trim());
+
+      // ▼ ステータス（公開 or 下書き）
+      fd.append('status', status);
 
       // ▼ タグ
       fd.append('tag_subject', tagSubject);
@@ -174,7 +177,13 @@ export default function ListingCreateForm({ apiBase = '/api', onCreated }) {
       setTagSubject('none'); setTagField('none'); setTagFaculty('none'); setHasWriting('0');
 
       if (typeof onCreated === 'function') onCreated(res?.data?.data || res?.data);
-      navigate('/listings');
+
+      // 下書き保存 → マイ出品へ / 公開 → 一覧へ
+      if (status === 'draft') {
+        navigate('/my/listings');
+      } else {
+        navigate('/listings');
+      }
     } catch (err) {
       if (err.response?.status === 422 && err.response.data?.errors) {
         setErrors(err.response.data.errors);
@@ -187,6 +196,9 @@ export default function ListingCreateForm({ apiBase = '/api', onCreated }) {
     }
   };
 
+  // 送信（公開）
+  const onSubmit = (e) => { e.preventDefault(); submitListing('active'); };
+
   return (
     <AppLayout>
       <div className="max-w-3xl mx-auto mt-10 mb-16 px-6">
@@ -197,7 +209,9 @@ export default function ListingCreateForm({ apiBase = '/api', onCreated }) {
             <form onSubmit={onSubmit} className="space-y-6" aria-label="listing create form">
               {/* 教科書名 */}
               <div>
-                <label htmlFor="title" className="block text-sm font-medium mb-1">教科書名 <span className="text-red-500">*</span></label>
+                <label htmlFor="title" className="block text-sm font-medium mb-1">
+                  教科書名 <span className="text-red-500">*</span>
+                </label>
                 <Input
                   id="title"
                   value={title}
@@ -212,7 +226,9 @@ export default function ListingCreateForm({ apiBase = '/api', onCreated }) {
 
               {/* 講義名 */}
               <div>
-                <label htmlFor="course" className="block text-sm font-medium mb-1">講義名 <span className="text-red-500">*</span></label>
+                <label htmlFor="course" className="block text-sm font-medium mb-1">
+                  講義名 <span className="text-red-500">*</span>
+                </label>
                 <Input
                   id="course"
                   value={course}
@@ -227,12 +243,20 @@ export default function ListingCreateForm({ apiBase = '/api', onCreated }) {
 
               {/* 価格 */}
               <div>
-                <label htmlFor="price" className="block text-sm font-medium mb-1">価格（円） <span className="text-red-500">*</span></label>
+                <label htmlFor="price" className="block text-sm font-medium mb-1">
+                  価格（円） <span className="text-red-500">*</span>
+                </label>
                 <Input
-                  id="price" type="number" inputMode="numeric" min={100} max={1000000} step={100}
+                  id="price"
+                  type="number"
+                  inputMode="numeric"
+                  min={100}
+                  max={1000000}
+                  step={100}
                   value={price}
                   onChange={(e) => { const v = e.target.value; setPrice(v); setPriceError(validatePrice(v)); }}
-                  placeholder="例）1500" required
+                  placeholder="例）1500"
+                  required
                 />
                 {(priceError || (errors.price && errors.price[0])) && (
                   <p className="text-red-500 text-sm mt-1">{priceError || errors.price[0]}</p>
@@ -285,16 +309,26 @@ export default function ListingCreateForm({ apiBase = '/api', onCreated }) {
               {/* 説明 */}
               <div>
                 <label htmlFor="desc" className="block text-sm font-medium mb-1">説明（任意）</label>
-                <Textarea id="desc" value={description} onChange={(e) => setDescription(e.target.value)}
-                          placeholder="書き込み有り/付録欠品 など" className="h-36 resize-y" />
+                <Textarea
+                  id="desc"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="書き込み有り/付録欠品 など"
+                  className="h-36 resize-y"
+                />
                 <div className="text-xs text-gray-400 text-right">{description.length}/2000</div>
               </div>
 
               {/* 画像 */}
               <div>
                 <label className="block text-sm font-medium mb-1">画像（最大3枚, 5MBまで）</label>
-                <Input ref={fileInputRef} type="file" accept={ACCEPT.join(',')} multiple
-                       onChange={(e) => handleFiles(e.target.files)} />
+                <Input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={ACCEPT.join(',')}
+                  multiple
+                  onChange={(e) => handleFiles(e.target.files)}
+                />
                 {(imageError ||
                   (errors['images.0'] && errors['images.0'][0]) ||
                   (errors.images && errors.images[0])) && (
@@ -306,9 +340,16 @@ export default function ListingCreateForm({ apiBase = '/api', onCreated }) {
                   <ul className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {previews.map((src, i) => (
                       <li key={i} className="relative group">
-                        <img src={src} alt={`preview-${i}`} className="w-full h-28 object-cover rounded-lg border" />
-                        <button type="button" onClick={() => removeImage(i)}
-                                className="absolute top-1 right-1 hidden group-hover:flex items-center px-2 py-1 text-xs rounded-md bg-black/60 text-white">
+                        <img
+                          src={src}
+                          alt={`preview-${i}`}
+                          className="w-full h-28 object-cover rounded-lg border"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(i)}
+                          className="absolute top-1 right-1 hidden group-hover:flex items-center px-2 py-1 text-xs rounded-md bg-black/60 text-white"
+                        >
                           削除
                         </button>
                       </li>
@@ -317,10 +358,25 @@ export default function ListingCreateForm({ apiBase = '/api', onCreated }) {
                 )}
               </div>
 
-              <div className="pt-2">
-                <Button type="submit" className="w-full bg-blue-700 hover:bg-blue-800"
-                        disabled={loading || !canSubmit}>
+              {/* アクション：公開 / 下書き */}
+              <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <Button
+                  type="submit"
+                  className="w-full bg-blue-700 hover:bg-blue-800"
+                  disabled={loading || !canSubmit}
+                  // submit は active
+                >
                   {loading ? '送信中...' : '出品する'}
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  disabled={loading || !canSubmit}
+                  onClick={() => submitListing('draft')}
+                >
+                  下書きに保存
                 </Button>
               </div>
             </form>

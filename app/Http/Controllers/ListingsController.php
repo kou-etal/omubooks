@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
+use App\Http\Requests\Listings\MyListingsRequest;
+
+
+
 class ListingsController extends Controller
 {
     /** 一覧（公開中のみ）+ 検索 + タグ絞り込み + ページネーション */
@@ -38,6 +42,34 @@ class ListingsController extends Controller
 
         return ListingResource::collection($list);
     }
+    public function myIndex(MyListingsRequest $request)
+{
+    $v = $request->validated();
+    $uid = auth()->id();
+    $q = $v['q'] ?? null;
+    $status = $v['status'] ?? 'all';
+
+    $list = Listing::query()
+        ->with(['images'])
+        ->where('user_id', $uid)
+        // ステータス指定（all のとき無条件）
+        ->when($status !== 'all', fn($qq) => $qq->where('status', $status))
+        // キーワード
+        ->when($q, fn ($qq) => $qq->where(function ($w) use ($q) {
+            $w->where('title', 'like', "%{$q}%")
+              ->orWhere('course_name', 'like', "%{$q}%");
+        }))
+        // （任意）タグ絞り込みを有効にする場合
+        ->when(!empty($v['tag_subject']), fn($qq) => $qq->where('tag_subject', $v['tag_subject']))
+        ->when(!empty($v['tag_field']),   fn($qq) => $qq->where('tag_field',   $v['tag_field']))
+        ->when(!empty($v['tag_faculty']), fn($qq) => $qq->where('tag_faculty', $v['tag_faculty']))
+        ->when(array_key_exists('has_writing', $v), fn($qq) => $qq->where('has_writing', (bool)$v['has_writing']))
+        ->latest()
+        ->paginate($v['per_page'] ?? 20);
+
+    // 自分のページでは seller 情報は不要なので images のみ
+    return \App\Http\Resources\ListingResource::collection($list);
+}
 
     /** 詳細 */
     public function show(Listing $listing)
@@ -52,70 +84,84 @@ class ListingsController extends Controller
     }
 
     /** 作成（画像最大3枚・タグ保存） */
+    
     public function store(StoreListingRequest $request)
-    {
-        $v = $request->validated();
+{
+    $v = $request->validated();
 
-        return DB::transaction(function () use ($v, $request) {
-            $listing = Listing::create([
-                'user_id'     => Auth::id(),
-                'title'       => $v['title'],
-                'course_name' => $v['course_name'],
-                'price'       => $v['price'],
-                'description' => $v['description'] ?? null,
-                'status'      => 'active',
-                // ▼ タグ
-                'tag_subject' => $v['tag_subject'] ?? 'none',
-                'tag_field'   => $v['tag_field']   ?? 'none',
-                'tag_faculty' => $v['tag_faculty'] ?? 'none',
-                'has_writing' => (bool)($v['has_writing'] ?? false),
-            ]);
+    return DB::transaction(function () use ($v, $request) {
+        // 受け取りが無ければ active （従来通り）
+        $status = $v['status'] ?? 'active';
 
-            $this->storeImages($request, $listing);
-            $listing->load(['user:id,name,rating_avg,deals_count', 'images']);
+        $listing = Listing::create([
+            'user_id'     => Auth::id(),
+            'title'       => $v['title'],
+            'course_name' => $v['course_name'],
+            'price'       => $v['price'],
+            'description' => $v['description'] ?? null,
+            'status'      => $status,
+            // ▼ タグ
+            'tag_subject' => $v['tag_subject'] ?? 'none',
+            'tag_field'   => $v['tag_field']   ?? 'none',
+            'tag_faculty' => $v['tag_faculty'] ?? 'none',
+            'has_writing' => (bool)($v['has_writing'] ?? false),
+        ]);
 
-            return (new ListingResource($listing))
-                ->additional(['message' => '出品を作成しました。']);
-        });
-    }
+        $this->storeImages($request, $listing);
+
+        $listing->load(['user:id,name,rating_avg,deals_count', 'images']);
+
+        return (new ListingResource($listing))
+            ->additional(['message' => $status === 'draft' ? '下書きとして保存しました。' : '出品を作成しました。']);
+    });
+}
 
     /** 更新（オーナーのみ・タグも更新可） */
-    public function update(UpdateListingRequest $request, Listing $listing)
-    {
-        $this->authorizeOwner($listing);
-        $v = $request->validated();
+   public function update(UpdateListingRequest $request, Listing $listing)
+{
+    $this->authorizeOwner($listing);
+    $v = $request->validated();
 
-        return DB::transaction(function () use ($v, $request, $listing) {
-            $listing->fill([
-                'title'       => $v['title']       ?? $listing->title,
-                'course_name' => $v['course_name'] ?? $listing->course_name,
-                'price'       => $v['price']       ?? $listing->price,
-                'description' => $v['description'] ?? $listing->description,
-                'status'      => $v['status']      ?? $listing->status,
-                // ▼ タグ
-                'tag_subject' => $v['tag_subject'] ?? $listing->tag_subject,
-                'tag_field'   => $v['tag_field']   ?? $listing->tag_field,
-                'tag_faculty' => $v['tag_faculty'] ?? $listing->tag_faculty,
-                // has_writing は null 許容にして「送られてこなければ変更しない」
-            ]);
-
-            if (array_key_exists('has_writing', $v)) {
-                $listing->has_writing = (bool)$v['has_writing'];
-            }
-
-            $listing->save();
-
-            // 画像差し替え（任意）：既存削除 → 新規保存
-            if ($request->hasFile('images')) {
-                $this->deleteImages($listing);
-                $this->storeImages($request, $listing);
-            }
-
-            $listing->load(['user:id,name,rating_avg,deals_count', 'images']);
-            return (new ListingResource($listing))
-                ->additional(['message' => '出品を更新しました。']);
-        });
+    // ★ 売却済みはステータス変更不可（改ざん対策）
+    if ($listing->status === 'sold' && isset($v['status']) && $v['status'] !== 'sold') {
+        return response()->json([
+            'message' => '売却済みの出品はステータスを変更できません。'
+        ], 422);
     }
+
+    return DB::transaction(function () use ($v, $request, $listing) {
+        $listing->fill([
+            'title'       => $v['title']       ?? $listing->title,
+            'course_name' => $v['course_name'] ?? $listing->course_name,
+            'price'       => $v['price']       ?? $listing->price,
+            'description' => $v['description'] ?? $listing->description,
+            // ★ sold のときは常に sold を保持。それ以外のときのみ更新可
+            'status'      => $listing->status === 'sold'
+                                ? 'sold'
+                                : ($v['status'] ?? $listing->status),
+
+            'tag_subject' => $v['tag_subject'] ?? $listing->tag_subject,
+            'tag_field'   => $v['tag_field']   ?? $listing->tag_field,
+            'tag_faculty' => $v['tag_faculty'] ?? $listing->tag_faculty,
+        ]);
+
+        if (array_key_exists('has_writing', $v)) {
+            $listing->has_writing = (bool)$v['has_writing'];
+        }
+
+        $listing->save();
+
+        if ($request->hasFile('images')) {
+            $this->deleteImages($listing);
+            $this->storeImages($request, $listing);
+        }
+
+        $listing->load(['user:id,name,rating_avg,deals_count', 'images']);
+        return (new \App\Http\Resources\ListingResource($listing))
+            ->additional(['message' => '出品を更新しました。']);
+    });
+}
+
 
     /** 非公開化 or 論理削除（MVPは非公開推奨） */
     public function destroy(Listing $listing)

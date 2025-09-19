@@ -27,6 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+    
     Route::get('trades', [TradesController::class, 'index']);
     Route::get('trades/{trade}', [TradesController::class, 'show']);
     Route::post('trades', [TradesController::class, 'store']);
@@ -70,7 +71,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/listings',           [ListingsController::class, 'index']);
     Route::get('/listings/suggest',   [ListingsController::class, 'suggest']);
     Route::get('/listings/{listing}', [ListingsController::class, 'show']);
-
+   Route::get('/my/listings', [ListingsController::class, 'myIndex']);
     Route::post('/listings',          [ListingsController::class, 'store']);
     Route::patch('/listings/{listing}', [ListingsController::class, 'update']);
     Route::delete('/listings/{listing}',[ListingsController::class, 'destroy']);

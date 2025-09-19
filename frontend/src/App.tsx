@@ -11,6 +11,8 @@ import {ListingDetailPage} from './pages/ListingDetailPage';
 import {TradesListPage} from './pages/TradesListPage';
 import {TradeDMPage} from './pages/TradeDMPage';
 // src/AppRouter.jsx など
+import MyListingsPage from './pages/MyListingsPage';
+import ListingEditPage from './pages/ListingEditPage';
 
 import TradeReviewCreatePage from './pages/TradeReviewCreatePage';
 
@@ -31,6 +33,8 @@ export function App() {
         {/* 出品関連 */}
         <Route path="/listings" element={<ListingsIndexPage />} />
         <Route path="/listings/new" element={<ListingCreateForm />} />
+        <Route path="/listings/me" element={<MyListingsPage />} />
+      <Route path="/listings/:id/edit" element={<ListingEditPage />} />
     
         <Route path="/listings/:id" element={<ListingDetailPage />} />
 

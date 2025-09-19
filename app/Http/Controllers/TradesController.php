@@ -127,16 +127,17 @@ class TradesController extends Controller
      * 自分側の完了フラグを立てる（双方完了になってもここでは評価はしない）
      * 後で別コントローラで「双方完了 → 評価可能」にする前提。
      */
-   public function completeByMe(Trade $trade)
+  
+public function completeByMe(Trade $trade)
 {
     $this->authorizeAccess($trade);
     $uid = auth()->id();
 
     return DB::transaction(function () use ($trade, $uid) {
-        // この取引の行をロックして同時実行を防止
+        // 取引行をロック
         $t = Trade::lockForUpdate()->findOrFail($trade->id);
 
-        // すでに全体が完了なら冪等応答
+        // 既に完了なら冪等応答
         if ($t->status === 'completed') {
             return response()->json([
                 'message' => 'すでに取引は完了しています',
@@ -144,7 +145,7 @@ class TradesController extends Controller
             ]);
         }
 
-        // 自分側の完了フラグだけ更新（冪等）
+        // 自分側の完了フラグを更新（冪等）
         $changed = false;
         if ($t->buyer_id === $uid && !$t->buyer_completed) {
             $t->buyer_completed = true;
@@ -155,26 +156,35 @@ class TradesController extends Controller
             $changed = true;
         }
 
-        // 両者完了した「今この瞬間」に初めて completed へ遷移させる
+        // ★ 双方完了になった“今この瞬間”に completed + Listing を sold に
         if ($t->buyer_completed && $t->seller_completed && $t->status !== 'completed') {
             $t->status = 'completed';
             $t->save();
 
-            // ★ ここで初回のみ実績を +1（ロック中なので二重加算されない）
-            User::whereKey($t->buyer_id)->increment('deals_count');
-            User::whereKey($t->seller_id)->increment('deals_count');
+            // Listing もロックして sold へ
+            $listing = \App\Models\Listing::lockForUpdate()->find($t->listing_id);
+            if ($listing && $listing->status !== 'sold') {
+                $listing->status = 'sold';
+                $listing->save();
+            }
+
+            // 実績カウント（初回のみ）
+            \App\Models\User::whereKey($t->buyer_id)->increment('deals_count');
+            \App\Models\User::whereKey($t->seller_id)->increment('deals_count');
         } elseif ($changed) {
-            $t->save(); // 途中段階の保存
+            // 途中段階の保存（どちらか片方だけ完了したとき）
+            $t->save();
         }
 
         return response()->json([
             'message' => $t->status === 'completed'
                 ? '双方が取引完了しました（評価へ進めます）'
                 : '取引完了フラグを設定しました',
-            'trade' => new \App\Http\Resources\TradeResource($t),
+            'trade' => new \App\Http\Resources\TradeResource($t->load('listing.images')),
         ]);
     });
 }
+
     /** 手数料0%キャンペーンの案内をDM送信 */
     protected function sendZeroFeeCampaignMessage(Trade $trade): void
     {

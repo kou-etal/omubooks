@@ -92,6 +92,9 @@ export default function AppHeader() {
             <Button asChild variant="ghost" className="text-base md:text-lg font-medium hover:text-blue-600 hover:underline">
               <Link to="/listings/new">出品</Link>
             </Button>
+            <Button asChild variant="ghost" className="text-base md:text-lg font-medium hover:text-blue-600 hover:underline">
+              <Link to="/listings/me">商品編集</Link>
+            </Button>
                <Button asChild variant="ghost" className="text-base md:text-lg font-medium hover:text-blue-600 hover:underline">
               <Link to="/trades">取引中</Link>
             </Button>
