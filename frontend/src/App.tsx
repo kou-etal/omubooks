@@ -10,6 +10,12 @@ import ListingCreateForm from './pages/ListingCreateForm';
 import {ListingDetailPage} from './pages/ListingDetailPage';
 import {TradesListPage} from './pages/TradesListPage';
 import {TradeDMPage} from './pages/TradeDMPage';
+// src/AppRouter.jsx など
+
+import TradeReviewCreatePage from './pages/TradeReviewCreatePage';
+
+
+
 
 export function App() {
   return (
@@ -31,6 +37,7 @@ export function App() {
         {/* 取引・DM */}
         <Route path="/trades" element={<TradesListPage />} />
         <Route path="/trades/:id/messages" element={<TradeDMPage />} />
+        <Route path="/trades/:id/review" element={<TradeReviewCreatePage />} />
 
         {/* 404ページ */}
         <Route path="*" element={<NotFound />} />

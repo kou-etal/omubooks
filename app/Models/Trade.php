@@ -10,25 +10,26 @@ class Trade extends Model
     use HasFactory;
 
     protected $fillable = [
-        'buyer_id',
-        'seller_id',
-        'listing_id',
-        'price',
-        'platform_fee',
-        'status', // pending_payment / scheduled / completed / cancelled
-        'is_platform_fee_paid',
-        'is_seller_amount_paid',
+        'buyer_id','seller_id','listing_id',
+        'price','platform_fee','status',
+        'is_platform_fee_paid','is_seller_amount_paid',
+        'buyer_completed','seller_completed',   // ← 追加
         'meta',
     ];
 
     protected $casts = [
-        'price'                 => 'integer',
-        'platform_fee'          => 'integer',
-        'is_platform_fee_paid'  => 'boolean',
+        'price' => 'integer',
+        'platform_fee' => 'integer',
+        'is_platform_fee_paid' => 'boolean',
         'is_seller_amount_paid' => 'boolean',
-        'meta'                  => 'array',
+        'buyer_completed' => 'boolean',         // ← 追加
+        'seller_completed' => 'boolean',        // ← 追加
+        'meta' => 'array',
     ];
-
+     public function getBothCompletedAttribute(): bool
+    {
+        return (bool) ($this->buyer_completed && $this->seller_completed);
+    }
     /** 参加者 */
     public function buyer()
     {

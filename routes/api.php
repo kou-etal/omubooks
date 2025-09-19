@@ -25,26 +25,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/trades/{trade}/messages/remind-platform-fee', [MessagesController::class, 'sendPlatformFeeReminder']);
     Route::post('/trades/{trade}/messages/seller-charge-template', [MessagesController::class, 'sendSellerChargeTemplate']);
 });
-Route::middleware(['auth:sanctum'])->group(function () {
 
-    /* ===========================
-     * Trades（取引）
-     * =========================== */
-
-    // 自分の取引一覧（フロント：GET /api/trades）
-    Route::get('/trades', [TradesController::class, 'index']);
-
-    // 取引作成（購入ボタン）
-    // リクエスト: { listing_id }
-    // レスポンス: trade json / 作成時に運営の自動メッセージ送信（サーバ側実装）
-    Route::post('/trades', [TradesController::class, 'store']);
-
-    // 取引詳細（フロント：GET /api/trades/{id}）
-    Route::get('/trades/{trade}', [TradesController::class, 'show'])->whereNumber('trade');
-
-    // 取引完了/キャンセル（必要なら）
-    Route::post('/trades/{trade}/complete', [TradesController::class, 'complete'])->whereNumber('trade');
-    Route::post('/trades/{trade}/cancel',   [TradesController::class, 'cancel'])->whereNumber('trade');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('trades', [TradesController::class, 'index']);
+    Route::get('trades/{trade}', [TradesController::class, 'show']);
+    Route::post('trades', [TradesController::class, 'store']);
+    Route::post('trades/{trade}/scheduled', [TradesController::class, 'markScheduled']);
+    // 自分側の完了フラグを立てる
+    Route::post('trades/{trade}/complete', [TradesController::class, 'completeByMe']);
 });
 
 Route::get('/session', [SessionController::class, 'show']);
@@ -63,7 +51,6 @@ Route::middleware('auth')->group(function () {
     // 作成（当事者＆completed限定）
     Route::post('/trades/{trade}/reviews', [ReviewsController::class, 'store']);
 });
-
 
 Route::middleware('auth')->group(function () {
     // 取引ごとのDM

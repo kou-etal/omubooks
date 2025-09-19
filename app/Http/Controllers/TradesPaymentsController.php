@@ -85,7 +85,7 @@ class TradesPaymentsController extends Controller
         });
     }
 
-    /** 両方の支払いが揃ったら scheduled へ */
+    /* 両方の支払いが揃ったら scheduled へ
     protected function maybeMarkScheduled(Trade $trade): void
     {
         if ($trade->is_platform_fee_paid && $trade->is_seller_amount_paid && $trade->status === 'pending_payment') {
@@ -94,7 +94,7 @@ class TradesPaymentsController extends Controller
 
             $this->systemMessageToBoth($trade, "【受け渡し待ちに移行】両方の支払いが確認されました。DMで日時を決めてください。");
         }
-    }
+    }*/
 
     /** 当事者のみアクセス可能 */
     protected function authorizeAccess(Trade $trade): void

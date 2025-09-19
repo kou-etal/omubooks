@@ -29,15 +29,18 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             // スコア＆コメント
-            $table->unsignedTinyInteger('score')  // 1〜5想定（バリデーションで縛る）
+            $table->unsignedTinyInteger('score')  // 1〜5想定
                   ->comment('1-5');
             $table->text('comment')->nullable();
 
-            // 不正防止用：同一取引で同一raterが複数レビューできない
+            // 両者レビューが揃うまで非公開
+            $table->boolean('is_public')->default(false)->index();
+
+            // 不正防止：同一取引で同一raterは一度だけ
             $table->unique(['trade_id', 'rater_id']);
 
             // よく使う検索用
-            $table->index(['ratee_id', 'created_at']);
+            $table->index(['ratee_id', 'is_public', 'created_at']);
 
             $table->timestamps();
         });
