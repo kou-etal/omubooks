@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback } from 'react';
+// src/components/AppHeader.jsx
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { axiosInstance } from '../api/axiosInstance';
 import { Button } from '@/components/ui/button';
@@ -17,14 +18,22 @@ export default function AppHeader() {
   const [user, setUser] = useState(null);
   const [scrolled, setScrolled] = useState(false);
 
+  // notifications
   const [notiOpen, setNotiOpen] = useState(false);
   const [notis, setNotis] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loadingNotis, setLoadingNotis] = useState(false);
 
+  const unreadRef = useRef(0); // 閉包ずれ防止
+  useEffect(() => { unreadRef.current = unreadCount; }, [unreadCount]);
+
+  const idleHitsRef = useRef(0); // 変化なしの連続回数 0→1→2（=20→40→60s）
+  const timerRef = useRef(null);
+
   const navigate = useNavigate();
   const location = useLocation();
 
+  // util
   const timeAgo = (iso) => {
     const d = new Date(iso);
     const diff = (Date.now() - d.getTime()) / 1000;
@@ -44,15 +53,14 @@ export default function AppHeader() {
     }
   }, []);
 
-  const normalizeNotis = (payload) => {
+  // 通知レスポンス正規化（{items, unread_count} or {data, meta.unread_count} どちらでもOK）
+  const normalizeNotiList = (payload) => {
     const list = Array.isArray(payload?.items)
       ? payload.items
       : Array.isArray(payload?.data)
       ? payload.data
       : [];
-
     return list.map((n) => {
-      // API がフラット形でも吸収
       const data = n.data ?? {
         kind: n.kind ?? null,
         title: n.title ?? '',
@@ -69,30 +77,35 @@ export default function AppHeader() {
     });
   };
 
+  // 一覧取得（モーダル開いた時のみ）
   const fetchNotifications = useCallback(async () => {
     try {
       setLoadingNotis(true);
       const res = await axiosInstance.get('/api/me/notifications', { withCredentials: true });
-      setNotis(normalizeNotis(res?.data));
-      setUnreadCount(Number(res?.data?.unread_count ?? res?.data?.meta?.unread_count ?? 0));
+      setNotis(normalizeNotiList(res?.data));
+      // バックエンドどちらの形でも拾う
+      const uc = Number(res?.data?.unread_count ?? res?.data?.meta?.unread_count ?? 0);
+      setUnreadCount(uc);
     } finally {
       setLoadingNotis(false);
     }
   }, []);
 
+  // モーダルを開く → 一覧取得 → 既読化（ベルのバッジは即時0に）
   const openNotis = async () => {
     setNotiOpen(true);
     await fetchNotifications();
     try {
-      // 419対策で一度 CSRF クッキーを踏む
       await axiosInstance.get('/sanctum/csrf-cookie', { withCredentials: true });
       await axiosInstance.post('/api/me/notifications/read-all', {}, { withCredentials: true });
       setUnreadCount(0); // バッジは即時クリア
+      idleHitsRef.current = 0; // バックオフもリセット
     } catch {
       /* noop */
     }
   };
 
+  // ヘッダー初期化
   useEffect(() => {
     fetchSession();
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -101,16 +114,69 @@ export default function AppHeader() {
     return () => window.removeEventListener('scroll', onScroll);
   }, [location.pathname, fetchSession]);
 
-  // ルート遷移のたびに未読数だけ軽く更新
+  // 軽量ポーリング：未読件数だけ（表示中20s、非表示90s。変化なしで20→40→60sにバックオフ）
+  useEffect(() => {
+    if (!user) return;
+    let stopped = false;
+
+    const intervalMs = () => {
+      if (document.hidden) return 90000; // バックグラウンド
+      if (idleHitsRef.current === 0) return 20000;
+      if (idleHitsRef.current === 1) return 40000;
+      return 60000;
+    };
+
+    const tick = async () => {
+      try {
+        const res = await axiosInstance.get('/api/me/notifications', {
+          withCredentials: true,
+          // 件数は不要なので最低限だけ（per_page=1でOK）
+          params: { per_page: 1 },
+        });
+        const next = Number(res?.data?.unread_count ?? res?.data?.meta?.unread_count ?? 0);
+        const changed = next !== unreadRef.current;
+        setUnreadCount(next);
+        idleHitsRef.current = changed ? 0 : Math.min(idleHitsRef.current + 1, 2);
+      } catch {
+        // エラー時は穏やかにバックオフ
+        idleHitsRef.current = Math.min(idleHitsRef.current + 1, 2);
+      } finally {
+        if (!stopped) {
+          timerRef.current = setTimeout(tick, intervalMs());
+        }
+      }
+    };
+
+    const onVis = () => {
+      // タブ復帰で即リセットして次tickを早める
+      idleHitsRef.current = 0;
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(tick, 200); // ちょい待って即チェック
+      }
+    };
+
+    document.addEventListener('visibilitychange', onVis);
+    tick();
+
+    return () => {
+      stopped = true;
+      document.removeEventListener('visibilitychange', onVis);
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [user]);
+
+  // ルート遷移時にも一発だけ未読数を軽く更新（体感向上）
   useEffect(() => {
     if (!user) return;
     (async () => {
       try {
         const res = await axiosInstance.get('/api/me/notifications', {
           withCredentials: true,
-          params: { limit: 1 },
+          params: { per_page: 1 },
         });
-        setUnreadCount(Number(res?.data?.unread_count ?? 0));
+        setUnreadCount(Number(res?.data?.unread_count ?? res?.data?.meta?.unread_count ?? 0));
+        idleHitsRef.current = 0; // 遷移直後はリセット
       } catch {}
     })();
   }, [location.pathname, user]);
@@ -139,10 +205,12 @@ export default function AppHeader() {
       role="navigation"
       aria-label="Global"
     >
+      {/* 左：ロゴ */}
       <Link to="/" className="text-2xl md:text-3xl font-extrabold hover:text-blue-700">
         TextbookMarket
       </Link>
 
+      {/* 右：ナビ */}
       <nav className="flex items-center gap-2 md:gap-4">
         <Button asChild variant="ghost" className="text-base md:text-lg font-medium hover:text-blue-600 hover:underline">
           <Link to="/">Home</Link>
@@ -178,7 +246,7 @@ export default function AppHeader() {
               <Link to="/profile/edit">プロフィール編集</Link>
             </Button>
 
-            {/* ログアウトの左にベル */}
+            {/* ▼ ベル（ログアウトの左） */}
             <button
               type="button"
               onClick={openNotis}
@@ -187,7 +255,10 @@ export default function AppHeader() {
             >
               <Bell className="h-6 w-6" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-full bg-red-600 text-white text-[11px] leading-5 text-center font-semibold">
+                <span
+                  className="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-full bg-red-600 text-white text-[11px] leading-5 text-center font-semibold"
+                  aria-label={`未読 ${unreadCount}`}
+                >
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </span>
               )}
@@ -200,7 +271,7 @@ export default function AppHeader() {
         )}
       </nav>
 
-      {/* 通知モーダル */}
+      {/* ▼ 通知モーダル */}
       <Dialog open={notiOpen} onOpenChange={setNotiOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
@@ -208,6 +279,7 @@ export default function AppHeader() {
             <DialogDescription>管理者のお知らせ・購入/取引の更新が表示されます。</DialogDescription>
           </DialogHeader>
 
+          {/* 中身 */}
           <div className="max-h-[60vh] overflow-y-auto space-y-2">
             {loadingNotis ? (
               <div className="py-8 text-center text-sm text-gray-500">読み込み中...</div>
