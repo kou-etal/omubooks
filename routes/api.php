@@ -12,6 +12,7 @@ use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\PusherAuthController;
 
 use App\Http\Controllers\VerifyEmailController;
+use App\Http\Controllers\NotificationController;
 
 
 
@@ -21,6 +22,9 @@ use App\Http\Controllers\ReviewsController;
 use App\Http\Controllers\TradesPaymentsController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\TradesController;
+use App\Http\Controllers\AdminController;
+
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/trades/{trade}/messages/remind-platform-fee', [MessagesController::class, 'sendPlatformFeeReminder']);
     Route::post('/trades/{trade}/messages/seller-charge-template', [MessagesController::class, 'sendSellerChargeTemplate']);
@@ -66,11 +70,17 @@ Route::middleware('auth')->group(function () {
         [MessagesController::class, 'sendSellerChargeTemplate']); // 出品者92%請求テンプレ
 });
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get   ('me/notifications',        [\App\Http\Controllers\NotificationController::class, 'index']);
+    Route::patch ('me/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markRead']);
+    Route::post  ('me/notifications/read-all',  [\App\Http\Controllers\NotificationController::class, 'markAllRead']);
+});
 
-Route::middleware('auth')->group(function () {
-    Route::get('/listings',           [ListingsController::class, 'index']);
+ Route::get('/listings',           [ListingsController::class, 'index']);
     Route::get('/listings/suggest',   [ListingsController::class, 'suggest']);
     Route::get('/listings/{listing}', [ListingsController::class, 'show']);
+Route::middleware('auth')->group(function () {
+   
    Route::get('/my/listings', [ListingsController::class, 'myIndex']);
     Route::post('/listings',          [ListingsController::class, 'store']);
     Route::patch('/listings/{listing}', [ListingsController::class, 'update']);
@@ -110,6 +120,7 @@ Route::post('/cart/clear', [CartApiController::class, 'clear'])->name('cart.clea
 
 Route::middleware(['auth:sanctum',AdminMiddleware::class])->group(function () {
     Route::get('/admin/users', [ProfileApiController::class, 'index']);
+    Route::post('/admin/notifications/broadcast', [AdminController::class, 'broadcast']);
     /*Route::get('/admin/products/create', [ProductController::class, 'adminCreate'])->name('admin.products.create');
     Route::post('/admin/products', [ProductController::class, 'adminStore'])->name('admin.products.store');
     Route::get('/admin/products/{id}/edit', [ProductController::class, 'adminEdit'])->name('admin.products.edit');

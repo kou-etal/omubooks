@@ -13,8 +13,11 @@ import {TradeDMPage} from './pages/TradeDMPage';
 // src/AppRouter.jsx など
 import MyListingsPage from './pages/MyListingsPage';
 import ListingEditPage from './pages/ListingEditPage';
+import AdminBroadcastPage from './pages/AdminBroadcastPage';
 
 import TradeReviewCreatePage from './pages/TradeReviewCreatePage';
+import {DashBoard} from './pages/DashBoard';
+
 
 
 
@@ -42,6 +45,9 @@ export function App() {
         <Route path="/trades" element={<TradesListPage />} />
         <Route path="/trades/:id/messages" element={<TradeDMPage />} />
         <Route path="/trades/:id/review" element={<TradeReviewCreatePage />} />
+        <Route path="/admin/dashboard" element={<DashBoard/>} />
+        <Route path="/admin/notify" element={<AdminBroadcastPage/>} />
+
 
         {/* 404ページ */}
         <Route path="*" element={<NotFound />} />

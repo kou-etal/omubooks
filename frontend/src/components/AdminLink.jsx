@@ -1,24 +1,31 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { axiosInstance } from '../api/axiosInstance';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { axiosInstance } from "../api/axiosInstance";
+import { Button } from "./ui/button";
 
 export function AdminLink() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await axiosInstance.get('/api/user');
-        setUser(res.data);
-      } catch (error) {
-        console.error('ユーザー情報取得エラー:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    const controller = new AbortController();
 
-    fetchUser();
+    axiosInstance
+      .get("/api/user", {
+        signal: controller.signal,
+        validateStatus: (s) => (s >= 200 && s < 300) || s === 401,
+      })
+      .then((res) => {
+        if (res.status === 401) {
+          setUser(null); 
+          return;
+        }
+        setUser(res.data);
+      })
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
+
+    return () => controller.abort();
   }, []);
 
   if (loading) return null;
@@ -26,13 +33,13 @@ export function AdminLink() {
 
   return (
     <div>
-    <Link to="/admin/dashboard" className="text-red-500">
-      ⚙️ admin
-    </Link>
-    
+      <Button
+        asChild
+        variant="ghost"
+        className="text-xl text-red-500 font-medium hover:text-red-500 hover:underline"
+      >
+        <Link to="/admin/dashboard">Admin</Link>
+      </Button>
     </div>
   );
 }
-/*<Link to="/admin/creategroup" className="text-red-500">
-      グル－プ作成
-    </Link>*/

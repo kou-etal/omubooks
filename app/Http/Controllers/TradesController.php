@@ -11,6 +11,8 @@ use App\Models\Listing;
 use App\Models\Message;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Notifications\TradeCompleted;
+use App\Notifications\ListingPurchased;
 
 class TradesController extends Controller
 {
@@ -93,6 +95,9 @@ class TradesController extends Controller
             // 出品を購入ロック
             $listing->status = 'hidden';
             $listing->save();
+            // 購入成立 → 出品者へ通知
+            $listing->user->notify(new \App\Notifications\ListingPurchased($trade));
+
 
             // 最初のDM：手数料0%の案内
             $this->sendZeroFeeCampaignMessage($trade);
@@ -171,6 +176,9 @@ public function completeByMe(Trade $trade)
             // 実績カウント（初回のみ）
             \App\Models\User::whereKey($t->buyer_id)->increment('deals_count');
             \App\Models\User::whereKey($t->seller_id)->increment('deals_count');
+            \App\Models\User::whereKey($t->buyer_id)->first()?->notify(new \App\Notifications\TradeCompleted($t));
+            \App\Models\User::whereKey($t->seller_id)->first()?->notify(new \App\Notifications\TradeCompleted($t));
+
         } elseif ($changed) {
             // 途中段階の保存（どちらか片方だけ完了したとき）
             $t->save();
